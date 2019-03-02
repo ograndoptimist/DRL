@@ -205,11 +205,11 @@ class AdmiravelMundoNovo(object):
             return [0, 1]
 
     def checa_acao(self, acao):
-        if acao not in self.pacote_acoes():
+        if acao in self.pacote_acoes():
             return True
         else:
             return False
-
+    
     def read(self):
         return self.estado_texto, self.estado_acao, self.finalizado
 
@@ -221,9 +221,12 @@ if __name__ == '__main__':
         estado, acao, finalizado = AMN.read()
         print(estado)
         print(acao)
-        acao_agora = int(input("\t>>> "))
-        while AMN.checa_acao(acao_agora):
-            print("\tAção não reconhecida com o contexto do jogo.")
-            acao_agora = int(input("\t>>> "))
+        acao_atual = int(input("\t>>> "))
+        if AMN.checa_acao(acao_atual):
+            pass
+        else:
+            while not AMN.checa_acao(acao_atual):
+                print("\tAção não reconhecida com o contexto do jogo.")
+                acao_atual = int(input("\t>>> "))
         print()
-        AMN.transicao_estado(acao_agora)
+        AMN.transicao_estado(acao_atual)
