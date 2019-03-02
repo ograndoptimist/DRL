@@ -1,11 +1,10 @@
 """
     \tSeja bem-vindo ao Admirável Mundo Novo!
-    \tO objetivo do jogo é dar suporte ao desenvolvimento de Agentes Inteligentes utilizando-se de Deep Reinforcement Learning
+    \tO objetivo do jogo é dar suporte ao desenvolvimento de Agentes Inteligentes que utilizam Deep Reinforcement Learning
     \tpara tarefas de Processamento de Linguagem Natural em língua portuguesa.        
 """
 
 print(__doc__)
-
 
 class AdmiravelMundoNovo(object):
     def __init__(self):
@@ -29,6 +28,10 @@ class AdmiravelMundoNovo(object):
             self.estado_oeste()
         elif self.valor_estado == 2.5 and acao == 0:
             self.estado_1()
+        elif self.valor_estado == 2.75 and acao == 0:
+            self.estado_4()
+        elif self.valor_estado == 2.75 and acao == 1:
+            self.estado_leste()
 
         elif self.valor_estado == 3 and acao == 1:
             self.estado_2_esquerda()
@@ -92,12 +95,19 @@ class AdmiravelMundoNovo(object):
         print()
         print("\tMosteiro dos Bravos Cavalos")
         print("\tReforço: 0")
-        print("")
+        print("\tVocê pode aproveitar que chegou até aqui e ajudar o zelador a manter os cavalos com os mais belos cortes de crina.\n\tNo entanto, tomaria cuidado para não toma nenhum coice, já que aqui também se\n\tencontram os cavalos mais selvagens do Reino da Ilha da Fantasia...")
         print("\t[0] Volte para a entrada do Castelo.")
         self.valor_estado = 2.5
 
     def estado_passagem_secreta(self):
-        pass
+        self.reforco += 10
+        print()
+        print("\tA passagem secreta")
+        print("\tReforço: 10")
+        print("\tDaqui em diante, o teletransporte do castelo se encarrega do trabalho de te aproximar do tesouro que procuras.\n\tTalvez o melhor seja sempre seguir em frente, já que a vida imita a arte...\n\tmas a escolha está em suas mãos...")
+        print("\t[0] Seguir em frente.")
+        print("\t[1] Voltar para o jardim.")
+        self.valor_estado = 2.75
 
     def estado_2(self):
         self.reforco += 1
@@ -184,7 +194,7 @@ class AdmiravelMundoNovo(object):
     def pacote_acoes(self):
         if self.valor_estado == 1:
             return [0]
-        elif self.valor_estado in [2, 2.25, 2.5]:
+        elif self.valor_estado in [2, 2.25, 2.5, 2.75]:
             return [0, 1, 2]
         elif self.valor_estado in [3, 3.25, 3.5]:
             return [0, 1, 2, 3]
