@@ -4,35 +4,57 @@ from keras.models import Sequential
 from keras.layers import Embedding, Dense, LSTM
 
 
-def preprocessText(text: str):
+def preprocessamento(texto: str):
     """
-        Eliminate pontuactions, single and double quoted symbols from the current string.
-        ::params:
-                text: a string containg all the suplemented text.
-        ::return:
+        Elimina pontuação, aspas simples e duplas do texto.
+        ::parametros:
+                texto: uma string que contém todo o texto.
+        ::retorno:
                 returns a string containing all of the words from the original string but without
                 especial symbols and capital letters.
-        Example:
-            >>> eliminatePontuaction("Some random text.")
-            'some random text here'
+        Exemplo:
+            >>> preprocessamento("Algum texto aleatorio, aqui.")
+            'algum texto aleatorio aqui'
     """
 
-    preprocessed_text = ''
+    texto_preprocessado = ''
 
-    text = list(text.lower().split())
+    texto = list(texto.lower().split())
         
-    for word in text:
-        new_word = ''
-        for character in word:
-            if character in {".", ",", "'", "’", '"', ":", "!"}:
+    for palavra in texto:
+        nova_palavra = ''
+        for caracter in palavra:
+            if caracter in {".", ",", "'", "’", '"', ":", "!"}:
                 pass
             else:
-                new_word += character
-        preprocessed_text +=  ' ' + new_word
+                nova_palavra += caracter
+        texto_preprocessado +=  ' ' + nova_palavra
 
-    preprocessed_text = preprocessed_text.replace('\\t', ' ').replace('\\n', ' ')
+    texto_preprocessado = texto_preprocessado.replace('\\t', ' ').replace('\\n', ' ')
 
-    return preprocessed_text.lower() 
+    return texto_preprocessado.lower()
+
+def tokenizacao(texto_preprocessado: str):
+    """
+        Constrói a tokenização.
+        ::parametros:
+                texto_preprocessado: o texto pré-processado a ser tokenizado.
+        ::retorno:
+                retorna um vetor de tokens.
+        Exemplo:
+            >>> tokenizacao("algum texto aleatorio aqui")
+            ['algum', 'texto', 'aleatorio', 'aqui']
+    """
+
+    raw_words = texto_preprocessado.split()
+
+    token = []
+
+    for palavra in raw_words:
+        if palavra not in token:
+            token.append(palavra)
+
+    return token
 
 
 class DeepQLearningAgent(object):
