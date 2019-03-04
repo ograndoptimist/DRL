@@ -76,7 +76,7 @@ def palavraParaIndice(tokens: list):
 
     return dicionario_de_palavras
 
-def vetorizacao(lista_de_palavras: list, dicionario_de_palavras: dict):
+def vectorizacao(lista_de_palavras: list, dicionario_de_palavras: dict):
     """
         Vetorização dos tokens.
         ::parametros:
@@ -108,7 +108,7 @@ class DeepQLearningAgent(object):
 
         self.model = self.modelo()
 
-    def modelo(self, estado_texto, acao_texto, dimensoes_embedding = 16, dimensoes_lstm = 32, numero_maximo_palavras):
+    def modelo(self, estado_texto, acao_texto, dimensoes_embedding = 16, dimensoes_lstm = 32, numero_maximo_palavras = 269):
         model = Sequential()
 
         model.add(Embedding(numero_maximo_palavras, dimensoes_embedding))
@@ -119,20 +119,38 @@ class DeepQLearningAgent(object):
         
         return model
 
+    def transforma(self, estado_texto, acao_texto):
+        estado_texto = preprocessamento(estado_texto)
+        estado_texto = tokenizacao(estado_texto)
+        estado_texto = vetorizacao(estado_texto, self.dicionario_de_tokens)
+
+        acao_texto = preprocessamento(acao_texto)
+        acao_texto = tokenizacao(acao_texto)
+        acao_texto = vetorizacao(acao_texto, self.dicionario_de_tokens)
+
+        return estado_texto, acao_texto        
+
     def treino(self, episodios, epsilon, epsilon_decay):
         for episodio in range(1, episodios + 1):
             eps = epsilon
+
             jogo = AdmiravelMundoNovo()
-            estado, acao, reforco, terminado = jogo.read()
+
+            estado_texto, acao_texto, reforco, terminado = jogo.read()
+            estado, acao = self.transforma(estado_texto, acao_texto)
             while not terminado:
                 if epsilon < np.random.random():
                     pass
-                    executa =
+                    #acao =
                 else:
                     acao = self.model.predict(estado)
-                proximo_estado, proxima_acao, reforco, terminado = jogo.transicao_estado(acao)
+                proximo_estado_texto, proxima_acao_texto, reforco, terminado = jogo.transicao_estado(acao)
+                proximo_estado, proxima_acao = self.transforma(proximo_estado_texto, proxima_acao_texto)                
+
                 target = self.Q(estado, acao) + learning_rate * [self.Q(proximo_estado, proxima_acao) - self.Q(estado, acao)]
+
                 self.model.fit(estado, target, epochs = 10, verbose = False)
+
                 eps *= epsilon_decay
 
     def Q(self, estado, acao):
