@@ -145,7 +145,7 @@ class DeepQLearningAgent(object):
                 else:
                     acao = self.model.predict(estado)
 
-                proximo_estado_texto, proxima_acao_texto, proximo_reforco, dimensao_acao, terminado = jogo.transicao_estado(acao)
+                proximo_estado_texto, proxima_acao_texto, proximo_reforco, prox_dimensao_acao, terminado = jogo.transicao_estado(acao)
                 proximo_estado, proxima_acao = self.transforma(proximo_estado_texto, proxima_acao_texto)                
 
                 target = proximo_reforco + fator_desconto * self.Q(proximo_estado, proxima_acao)
@@ -154,6 +154,7 @@ class DeepQLearningAgent(object):
 
                 estado = proximo_estado
                 acao = proxima_acao
+                dimensao_acao = prox_dimensao_acao
 
                 eps *= epsilon_decay
                 reforco_acumulado += reforco
