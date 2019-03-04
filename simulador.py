@@ -232,6 +232,6 @@ if __name__ == '__main__':
         AMN.transicao_estado(acao_atual)
 
         estado, acao, dimensao_acao, reforco_imediato, finalizado = AMN.read()
-        #print("\tReforço: {0}".format(reforco_imediato))
+        print("\tReforço: {0}".format(reforco_imediato))
         print(estado)
         AMN.imprimeAcao(acao)
