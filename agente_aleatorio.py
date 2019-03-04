@@ -1,13 +1,16 @@
 from simulador import AdmiravelMundoNovo
 import time
 import random
+from agente import preprocessamento
 
 
 class AgenteAleatorio(object):
     def __init__(self):
+        self.vocabulario = ""
         self.joga()
         
-    def joga(self, episodios = 10):
+    def joga(self, episodios = 100):
+        self.vocab = ""
         for episodio in range(1, episodios + 1):
             jogo = AdmiravelMundoNovo()
 
@@ -15,6 +18,8 @@ class AgenteAleatorio(object):
             print("\tReforço: {0}".format(reforco_imediato))
             print(estado)
             jogo.imprimeAcao(lista_acoes)
+            
+            self.vocabulario += ' ' + (estado + ' ' + ' '.join(lista_acoes) + " Reforço: %d" %reforco_imediato)
             while not terminado:
                 time.sleep(3)
 
@@ -29,16 +34,20 @@ class AgenteAleatorio(object):
                 print(estado)
                 jogo.imprimeAcao(lista_acoes)
 
+                self.vocabulario += ' ' + (estado + ' ' + ' '.join(lista_acoes) + " Reforço: %d" %reforco_imediato)
+            
             print()
+
+        
+    def gera_vocabulario(self):
+        self.vocabulario = preprocessamento(self.vocabulario)
+        lista_vocabulario = set(self.vocabulario.split())
+
+        with open('vocab_teste.txt', 'w') as arquivo:
+            for palavra in lista_vocabulario:
+                arquivo.write("%s\n" %palavra)        
 
 
 if __name__ == '__main__':
     teste = AgenteAleatorio()
-    
-
-                
-                
-                
-                
-        
-        
+    teste.gera_vocabulario()
