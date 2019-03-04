@@ -108,14 +108,14 @@ class DeepQLearningAgent(object):
 
         self.model = self.modelo()
 
-    def modelo(self, estado_texto, acao_texto, dimensoes_embedding = 16, dimensoes_lstm = 32, numero_maximo_palavras = 269):
+    def modelo(self, dimensoes_embedding = 16, dimensoes_lstm = 32, numero_maximo_palavras = 269):
         model = Sequential()
 
         model.add(Embedding(numero_maximo_palavras, dimensoes_embedding))
         model.add(LSTM(dimensoes_lstm))
         model.add(Dense(8))        
 
-        model.compile(optimizer = 'rmsprop', loss_function = '', metrics = '')
+        model.compile(optimizer = 'rmsprop', loss_function = '', metrics = ['acc'])
         
         return model
 
@@ -130,28 +130,33 @@ class DeepQLearningAgent(object):
 
         return estado_texto, acao_texto        
 
-    def treino(self, episodios, epsilon, epsilon_decay):
+    def treino(self, episodios, epsilon, epsilon_decay, taxa_aprendizado, fator_desconto):
+        eps = epsilon
         for episodio in range(1, episodios + 1):
-            eps = epsilon
-
             jogo = AdmiravelMundoNovo()
 
-            estado_texto, acao_texto, reforco, terminado = jogo.read()
+            estado_texto, acao_texto, reforco, dimensao_acao, terminado = jogo.read()
             estado, acao = self.transforma(estado_texto, acao_texto)
+
+            reforco_acumulado = 0
             while not terminado:
                 if epsilon < np.random.random():
-                    pass
-                    #acao =
+                    acao = np.random.randint(dimensao_acao)
                 else:
                     acao = self.model.predict(estado)
-                proximo_estado_texto, proxima_acao_texto, reforco, terminado = jogo.transicao_estado(acao)
+
+                proximo_estado_texto, proxima_acao_texto, proximo_reforco, dimensao_acao, terminado = jogo.transicao_estado(acao)
                 proximo_estado, proxima_acao = self.transforma(proximo_estado_texto, proxima_acao_texto)                
 
-                target = self.Q(estado, acao) + learning_rate * [self.Q(proximo_estado, proxima_acao) - self.Q(estado, acao)]
+                target = proximo_reforco + fator_desconto * self.Q(proximo_estado, proxima_acao)
 
                 self.model.fit(estado, target, epochs = 10, verbose = False)
 
+                estado = proximo_estado
+                acao = proxima_acao
+
                 eps *= epsilon_decay
+                reforco_acumulado += reforco
 
     def Q(self, estado, acao):
         pass
