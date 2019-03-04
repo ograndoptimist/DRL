@@ -1,7 +1,7 @@
 from simulador import AdmiravelMundoNovo
 import time
 import random
-from agente import preprocessamento
+from utilidades import preprocessamento
 
 
 class AgenteAleatorio(object):
