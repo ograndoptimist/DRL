@@ -18,49 +18,33 @@ class AdmiravelMundoNovo(object):
 
         self.estado_inicial()
 
-    def transicao_estado(self, acao):
-        if self.valor_estado == 1 and acao == 0:
-            self.estado_1()
-
-        elif self.valor_estado == 2 and acao == 0:
+    def transicao_estado(self, acao):        
+        if self.valor_estado == 2 and acao == 0:
             self.estado_2()
         elif self.valor_estado == 2 and acao == 1:
             self.estado_leste()
-        elif self.valor_estado == 2.25 and acao == 0:
+        elif self.valor_estado in [1, 2.25, 2.5] and acao == 0:
             self.estado_1()
         elif self.valor_estado == 2.25 and acao == 1:
             self.estado_passagem_secreta()
         elif self.valor_estado == 2 and acao == 2:
             self.estado_oeste()
-        elif self.valor_estado == 2.5 and acao == 0:
-            self.estado_1()
-        elif self.valor_estado == 2.75 and acao == 0:
-            self.estado_4()
         elif self.valor_estado == 2.75 and acao == 1:
             self.estado_leste()
-
         elif self.valor_estado == 3 and acao == 1:
             self.estado_2_esquerda()
-        elif self.valor_estado == 3.25 and acao == 0:
-            self.estado_2()
-        elif self.valor_estado == 3.5 and acao == 0:
+        elif self.valor_estado in [3.25, 3.5] and acao == 0:
             self.estado_2()
         elif self.valor_estado == 3 and acao == 2:
-            self.estado_2_direita()
-        elif self.valor_estado == 3 and acao == 0:
-            self.estado_3()
-
+            self.estado_2_direita()        
         elif self.valor_estado == 4 and acao == 1:
             self.estado_3_esquerda()
-        elif self.valor_estado == 4.25 and acao == 0:
-            self.estado_3()
-        elif self.valor_estado == 4.5 and acao == 0:
+        elif self.valor_estado in [3, 4.25, 4.5] and acao == 0:
             self.estado_3()
         elif self.valor_estado == 4 and acao == 2:
             self.estado_3_direita()
-        elif self.valor_estado == 4 and acao == 0:
+        elif self.valor_estado in [2.75, 4] and acao == 0:
             self.estado_4()
-
         elif self.valor_estado == 5 and acao == 0:
             self.estado_4_esquerda()
         elif self.valor_estado == 5 and acao == 1:
@@ -214,7 +198,6 @@ class AdmiravelMundoNovo(object):
 
 if __name__ == '__main__':
     AMN = AdmiravelMundoNovo()
-
     estado, acao, dimensao_acao, reforco_imediato, finalizado = AMN.read()
     print("\tReforço: {0}".format(reforco_imediato))
     print(estado)
@@ -228,9 +211,7 @@ if __name__ == '__main__':
                 print("\tAção não reconhecida com o contexto do jogo.")
                 acao_atual = int(input("\t>>> "))
         print()
-
         AMN.transicao_estado(acao_atual)
-
         estado, acao, dimensao_acao, reforco_imediato, finalizado = AMN.read()
         print("\tReforço: {0}".format(reforco_imediato))
         print(estado)
