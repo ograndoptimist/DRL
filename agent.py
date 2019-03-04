@@ -56,7 +56,7 @@ def tokenizacao(texto_preprocessado: str):
 
     return token
 
-def palavraParaIndice(tokens: list):
+def palavraParaIndice(tokens: list[str]):
     """
         Cria um dicionário associando um índice inteiro a cada palavra no vetor tokens.
         ::parametros:
@@ -76,7 +76,7 @@ def palavraParaIndice(tokens: list):
 
     return dicionario_de_palavras
 
-def vectorizacao(lista_de_palavras: list, dicionario_de_palavras: dict):
+def vectorizacao(lista_de_palavras: list[str], dicionario_de_palavras: dict[str:int]):
     """
         Vetorização dos tokens.
         ::parametros:
@@ -99,16 +99,16 @@ def vectorizacao(lista_de_palavras: list, dicionario_de_palavras: dict):
 
 
 class DeepQLearningAgent(object):
-    def __init__(self):
+    def __init__(self, dimensoes_embedding, dimensoes_lstm):
         with open('vocabulario.txt', 'r') as arquivo:
             vocabulario = arquivo.read()
             vocabulario = list(vocabulario.split())
             tokens = tokenizacao(vocabulario)
             self.dicionario_de_tokens = palavraParaIndice(tokens)
 
-        self.model = self.modelo()
+        self.model = self.modelo(dimensoes_embedding, dimensoes_lstm)
 
-    def modelo(self, dimensoes_embedding = 16, dimensoes_lstm = 32, numero_maximo_palavras = 269):
+    def modelo(self, dimensoes_embedding = 16: int, dimensoes_lstm = 32: int, numero_maximo_palavras = 269: int):
         model = Sequential()
 
         model.add(Embedding(numero_maximo_palavras, dimensoes_embedding))
@@ -119,7 +119,7 @@ class DeepQLearningAgent(object):
         
         return model
 
-    def transforma(self, estado_texto, acao_texto):
+    def transforma(self, estado_texto:str, acao_texto: list[str]):
         estado_texto = preprocessamento(estado_texto)
         estado_texto = tokenizacao(estado_texto)
         estado_texto = vetorizacao(estado_texto, self.dicionario_de_tokens)
@@ -130,7 +130,7 @@ class DeepQLearningAgent(object):
 
         return estado_texto, acao_texto        
 
-    def treino(self, episodios, epsilon, epsilon_decay, taxa_aprendizado, fator_desconto):
+    def treino(self, episodios: int, epsilon: float, epsilon_decay: float, taxa_aprendizado: float, fator_desconto: float):
         eps = epsilon
         for episodio in range(1, episodios + 1):
             jogo = AdmiravelMundoNovo()
@@ -159,5 +159,5 @@ class DeepQLearningAgent(object):
                 eps *= epsilon_decay
                 reforco_acumulado += reforco
 
-    def Q(self, estado, acao):
+    def Q(self, estado: list[int], lista_acoes: list[int]):
         pass
