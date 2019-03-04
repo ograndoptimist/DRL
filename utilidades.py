@@ -70,7 +70,7 @@ def palavraParaIndice(tokens: list):
 
     return dicionario_de_palavras
 
-def vectorizacao(lista_de_palavras: list, dicionario_de_palavras: dict):
+def vetorizacao(lista_de_palavras: list, dicionario_de_palavras: dict):
     """
         Vetorização dos tokens.
         ::parametros:
