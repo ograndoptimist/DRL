@@ -104,6 +104,7 @@ class AdmiravelMundoNovo(object):
         self.reforco += reforco_imediato
         self.valor_estado = 2.5
         self.finalizado = False
+        self.espaco_acoes = 1
         print("\tReforço: 0")
         self.estado_texto = "\tMosteiro dos Bravos Cavalos\n\tVocê pode aproveitar que chegou até aqui e ajudar o zelador a manter os cavalos com os mais belos cortes de crina.\n\tNo entanto, tomaria cuidado para não toma nenhum coice, já que aqui também se\n\tencontram os cavalos mais selvagens do Reino da Ilha da Fantasia..."
         self.estado_acao = "\t[0] Volte para a entrada do Castelo."
@@ -114,6 +115,7 @@ class AdmiravelMundoNovo(object):
         self.reforco += reforco_imediato
         self.valor_estado = 2.75
         self.finalizado = False
+        self.espaco_acoes = 2
         print("\tReforço: 10")
         self.estado_texto = "\tA passagem secreta\n\tDaqui em diante, o teletransporte do castelo se encarrega do trabalho de te aproximar do tesouro que procuras.\n\tTalvez o melhor seja sempre seguir em frente, já que a vida imita a arte...\n\tmas a escolha está em suas mãos..."
         self.estado_acao = "\t[0] Seguir em frente.\n\t[1] Voltar para o jardim."
@@ -124,6 +126,7 @@ class AdmiravelMundoNovo(object):
         self.reforco += reforco_imediato
         self.valor_estado = 3
         self.finalizado = False
+        self.espaco_acoes = 3
         print("\tReforço: 1")
         self.estado_texto = "\tSalão Principal\n\tBem-vindo ao Salão Principal do Castelo. Nosso Castelo está sempre recebendo as mais belas\n\tdivindades do Reino da Fantasia. O tapete vermelho pode te levar ao salão de jantar se você seguir\n\tà esquerda, ou caso contrário, à direita, você alcança a biblioteca dos mais sábios livros que\n\ttalvez esconda os segredos mais esperados de todo o novo continente.\n\tTambém há a possibilidade de subir as escadas para se chegar ao próximo andar."
         self.estado_acao = "\t[0] Suba as escadas.\n\t[1] Siga à esquerda.\n\t[2] Siga à direita."
@@ -134,6 +137,7 @@ class AdmiravelMundoNovo(object):
         self.reforco += reforco_imediato
         self.valor_estado = 3.25
         self.finalizado = False
+        self.espaco_acoes = 1
         print("\tReforço: 0")
         self.estado_texto = "\tSalão de Jantar\n\tOs mais belos jantares são servidos à nobreza do Reino neste local. Somente os de sangue mais\n\tpuro podem utilizar da louça sobre a mesa. O antigo dono da chave preciosa já esteve por aqui."
         self.estado_acao = "\t[0] Volte ao salão principal."
@@ -144,6 +148,7 @@ class AdmiravelMundoNovo(object):
         self.reforco += reforco_imediato
         self.valor_estado = 3.5
         self.finalizado = False
+        self.espaco_acoes = 1
         print("\tReforço: 0")        
         self.estado_texto = "\tBiblioteca dos Mais Sábios\n\tPor esta biblioteca já passaram os mais sábios do Reino. Mentes brilhantes produziram obras\n\tque ficarão por aqui por toda a eternidade. Talvez se você ler todos os livros, será capaz de\n\tencontrar a reposta do enigma do paradeiro da chave preciosa de ouro."
         self.estado_acao = "\t[0] Volte ao salão principal."
@@ -154,6 +159,7 @@ class AdmiravelMundoNovo(object):
         self.reforco += reforco_imediato
         self.valor_estado = 4
         self.finalizado = False
+        self.espaco_acoes = 3
         print("\tReforço: 1")
         self.estado_texto = "\tSegundo andar\n\tVocê conseguiu subir as longas escadas do Castelo Principal e chegar ao andar de travessuras.\n\tEste andar é geralmente povoado pelos bobos da corte, então é melhor ficar atento para evitar\n\tapuros com os mais astutos do povoado."
         self.estado_acao = "\t[0] Suba as escadas.\n\t[1] Siga à esquerda.\n\t[2] Siga à direita."
@@ -164,6 +170,7 @@ class AdmiravelMundoNovo(object):
         self.reforco += reforco_imediato
         self.valor_estado = 4.25
         self.finalizado = False
+        self.espaco_acoes = 1
         print("\tReforço: 0")
         self.estado_texto = "\tTreinamento dos Travessos\n\tCuidado para não atrapalha-los. Aqui eles preparam as melhores perfomances para toda a corte."
         self.estado_acao = "\t[0] Volte ao salão principal."
@@ -174,6 +181,7 @@ class AdmiravelMundoNovo(object):
         self.reforco += reforco_imediato
         self.valor_estado = 4.5
         self.finalizado = False
+        self.espaco_acoes = 1
         print("\tReforço: 0")
         self.estado_texto = "\tDormitório dos Travessos\n\tAté nos sonhos os bobos da corte aprontam as mais astutas travessuras. Se eu fosse você tomaria\n\tcuidado para não acordá-los, ou é melhor se preparar para se tornar o palhaço da corte..."
         self.estado_acao = "\t[0] Volte ao salão principal."
@@ -184,6 +192,7 @@ class AdmiravelMundoNovo(object):
         self.reforco += reforco_imediato
         self.valor_estado = 5
         self.finalizado = False
+        self.espaco_acoes = 2
         print("\tReforço: 1")
         self.estado_texto = "\tSantuário dos sonhos esquecidos\n\tOs sonhos mais profundos viajam pelos quartos deste andar. Aqui o inconsciente se comunica com o\n\tconsciente dos seres do Reino. Dizem por aí que sonharam que a chave estaria por aqui, mas\n\tcabe a você verificar quarto por quarto se é uma verdade ou apenas mais um dos sonhos."
         self.estado_acao = "\t[0] Siga à esquerda.\n\t[1] Siga à direita."
@@ -225,12 +234,12 @@ class AdmiravelMundoNovo(object):
             return False
     
     def read(self):
-        return self.estado_texto, self.estado_acao, self.finalizado
+        return self.estado_texto, self.estado_acao, self.epaco_acoes, self.finalizado
 
 
 if __name__ == '__main__':
     AMN = AdmiravelMundoNovo()
-    estado, acao, finalizado = AMN.read()
+    estado, acao, dimensao_acao, finalizado = AMN.read()
     print(estado)
     print(acao)
     while not finalizado:
@@ -243,6 +252,6 @@ if __name__ == '__main__':
                 acao_atual = int(input("\t>>> "))
         print()
         AMN.transicao_estado(acao_atual)
-        estado, acao, finalizado = AMN.read()
+        estado, acao, dimensao_acao, finalizado = AMN.read()
         print(estado)
         print(acao)
