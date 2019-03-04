@@ -56,9 +56,56 @@ def tokenizacao(texto_preprocessado: str):
 
     return token
 
+def palavraParaIndice(tokens: list):
+    """
+        Cria um dicionário associando um índice inteiro a cada palavra no vetor tokens.
+        ::parametros:
+            tokens: um vetor de palavras únicas.
+        ::retorno:
+            dicionario_de_palavra: retorna um dicionario contendo  todo o vocabulário composto
+            do seguinte conteúdo: {'palavra': índice_inteiro}.
+         Exemplo:
+            >>> palavraParaIndice(['algum', 'texto', 'aleatorio', 'aqui'])
+            {'algum': 0, 'texto': 1, 'aleatorio': 2, 'aqui': 3}
+    """
+
+    dicionario_de_palavras = dict()
+
+    for indice, palavra in enumerate(tokens):
+        dicionario_de_palavras[palavra] = indice
+
+    return dicionario_de_palavras
+
+def vectorizacao(lista_de_palavras: list, dicionario_de_palavras: dict):
+    """
+        Vetorização dos tokens.
+        ::parametros:
+            lista_de_palavras: um vetor com as palavras pré-processadas.
+            dicionario_de_palavras: um dicionário contendo todo o vocabulário do texto.
+        ::retorna:
+            retorna um vetor de inteiros contendo o índice de cada palavra do texto.
+        Exemplo:
+            >>> vetorizacao(['algum', 'texto', 'aleatorio', 'aqui'], {'algum': 0, 'texto': 1, 'aleatorio': 2, 'aqui': 3})
+            [0, 1, 2, 3]
+    """
+
+    vetor = []
+
+    for palavra in lista_de_palavras:
+        vetor.append(dicionario_de_palavras[palavra])
+
+    return vetor 
+
+
 
 class DeepQLearningAgent(object):
     def __init__(self):
+        with open('vocabulario.txt', 'r') as arquivo:
+            vocabulario = arquivo.read()
+            vocabulario = list(vocabulario.split())
+            tokens = tokenizacao(vocabulario)
+            self.dicionario_de_tokens = palavraParaIndice(tokens)
+
         self.model = self.modelo()
 
     def modelo(self, estado_texto, acao_texto, dimensoes_embedding = 16, dimensoes_lstm = 32, numero_maximo_palavras):
