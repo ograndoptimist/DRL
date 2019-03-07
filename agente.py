@@ -99,8 +99,12 @@ class DeepQLearningAgente(object):
             while not terminado:
                 acao = self.acao(estado, acao, eps, dimensao_acao)
 
-                proximo_estado_texto, proxima_acao_texto, reforco, prox_dimensao_acao, terminado = jogo.transicao_estado(acao)
-                proximo_estado, proxima_acao = self.transforma(proximo_estado_texto, proxima_acao_texto)                
+                jogo.transicao_estado(acao)
+
+                proximo_estado_texto, proxima_acao_texto, reforco, prox_dimensao_acao, terminado = jogo.read()
+
+                proximo_estado = self.transforma(proximo_estado_texto)
+                proxima_acao = self.transforma(proxima_acao_texto) 
 
                 Q_target = reforco + gamma * self.acao(proximo_estado, proxima_acao, eps, prox_dimensao_acao)
 
