@@ -29,7 +29,7 @@ class DeepQLearningAgente(object):
 
         model.add(Embedding(numero_maximo_palavras, dimensoes_embedding))
         model.add(LSTM(dimensoes_lstm))
-        model.add(Dense(1, activation = 'sigmoid'))        
+        model.add(Dense(1, activation = 'tanh'))        
 
         model.compile(optimizer = 'rmsprop', loss = 'mse', metrics = ['acc'])
         
