@@ -1,7 +1,7 @@
 from simulador import AdmiravelMundoNovo
 import numpy as np
 from keras.models import Sequential
-from keras.layers import Embedding, Dense, Dropout LSTM
+from keras.layers import Embedding, Dense, Dropout, LSTM
 from utilidades import preprocessamento, tokenizacao, palavraParaIndice, vetorizacao
 import random
 
