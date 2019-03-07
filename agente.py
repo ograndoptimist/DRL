@@ -96,7 +96,7 @@ class DeepQLearningAgent(object):
 
             reforco_acumulado = 0
             while not terminado:
-                acao = self.acao(estado, acao)
+                acao = self.acao(estado, acao, eps, dimensao_acao)
 
                 proximo_estado_texto, proxima_acao_texto, reforco, prox_dimensao_acao, terminado = jogo.transicao_estado(acao)
                 proximo_estado, proxima_acao = self.transforma(proximo_estado_texto, proxima_acao_texto)                
