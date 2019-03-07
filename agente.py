@@ -101,7 +101,7 @@ class DeepQLearningAgent(object):
                 proximo_estado_texto, proxima_acao_texto, reforco, prox_dimensao_acao, terminado = jogo.transicao_estado(acao)
                 proximo_estado, proxima_acao = self.transforma(proximo_estado_texto, proxima_acao_texto)                
 
-                Q_target = reforco + gamma * self.acao(proximo_estado, proxima_acao)
+                Q_target = reforco + gamma * self.acao(proximo_estado, proxima_acao, eps, prox_dimensao_acao)
 
                 self.model.fit(estado, Q_target, epochs = 10, batch_size = batch_size, verbose = False)
 
