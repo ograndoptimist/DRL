@@ -28,7 +28,7 @@ class DeepQLearningAgente(object):
         model = Sequential()
 
         model.add(Embedding(numero_maximo_palavras, dimensoes_embedding))
-        model.add(Droupout(droupout_rate))
+        model.add(Dropout(dropout_rate))
         model.add(LSTM(dimensoes_lstm))
         model.add(Dense(8, activation = 'tanh'))        
 
