@@ -7,7 +7,7 @@ import random
 
 
 
-class DeepQLearningAgent(object):
+class DeepQLearningAgente(object):
     """
         Implementação de um Agente Artificial utilizando-se de Reinforcement Learning e Deep Learning.
         É utilizado o algoritmo off-policy Q-Learning para treinar uma Rede Neural baseada em LSTM.
