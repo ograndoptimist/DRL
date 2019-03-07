@@ -120,13 +120,7 @@ class DeepQLearningAgent(object):
 
             print("Episódio {0}: Reforço acumulado de {1}".format(episodio, reforco_acumulado))
             estat_reforcos = {episodio: reforco_acumulado}
-
-    def Q(self, estado, acao):
-        """
-            Retorna a ação de maior Q-value.
-        """        
-        pass
-
+   
 
 if __name__ == '__main__':
     agente = DeepQLearningAgente()
