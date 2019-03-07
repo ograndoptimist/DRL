@@ -18,7 +18,7 @@ class DeepQLearningAgente(object):
             vocabulario = ''.join(vocabulario)
             vocabulario = vocabulario.split()
             self.dicionario_de_tokens = palavraParaIndice(vocabulario)
-            
+                        
         self.model = self.modelo()
 
     def modelo(self, dimensoes_embedding = 32, dimensoes_lstm = 32, numero_maximo_palavras = 269):
@@ -40,11 +40,17 @@ class DeepQLearningAgente(object):
             Realiza a conversão dos textos que descrevem os estados e as ações em vetor de inteiros.
         """
         if isinstance(texto, list):
-            texto = ' '.join(texto)
+            vetor = []
+            for parte in texto:
+                parte = preprocessamento(parte)
+                tokens = tokenizacao(parte)
+                vetor_aux = vetorizacao(tokens, self.dicionario_de_tokens)
+                vetor.append(vetor_aux)
+            return vetor                
 
         texto = preprocessamento(texto)
         tokens = tokenizacao(texto)
-        vetor = vetorizacao(tokens, self.dicionario_de_tokens)
+        vetor = vetorizacao(tokens, self.dicionario_de_tokens)    
 
         return vetor
 
@@ -96,10 +102,9 @@ class DeepQLearningAgente(object):
 
             reforco_acumulado = 0
             while not terminado:
-                acao = self.acao(estado, acao, eps, dimensao_acao)
+                escolha = self.acao(estado, acao, eps, dimensao_acao)
 
-                jogo.transicao_estado(acao)
-
+                jogo.transicao_estado(escolha)
                 proximo_estado_texto, proxima_acao_texto, reforco, prox_dimensao_acao, terminado = jogo.read()
 
                 proximo_estado = self.transforma(proximo_estado_texto)
@@ -107,7 +112,7 @@ class DeepQLearningAgente(object):
 
                 Q_target = reforco + gamma * self.acao(proximo_estado, proxima_acao, eps, prox_dimensao_acao)
 
-                self.model.fit(estado, Q_target, epochs = 10, batch_size = batch_size, verbose = False)
+                self.model.fit([estado + acao], Q_target, epochs = 10, batch_size = batch_size, verbose = False)
 
                 estado = proximo_estado
                 acao = proxima_acao
