@@ -81,8 +81,8 @@ class DeepQLearningAgent(object):
 
         return np.argmax(q_values)
 
-    def treino(self, episodios = 256: int, batch_size = 64: int, epsilon = 1.0: float, epsilon_decay = 0.99: float,
-                   taxa_aprendizado = 0.0002: float, gamma = 0.95: float):
+    def treino(self, episodios = 256, batch_size = 64, epsilon = 1.0, epsilon_decay = 0.99,
+                   taxa_aprendizado = 0.0002, gamma = 0.95):
         """
             Realiza o treinamento do Agente.
         """
