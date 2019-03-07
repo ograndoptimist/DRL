@@ -67,7 +67,7 @@ class DeepQLearningAgente(object):
         """
     
         if np.random.random() < epsilon:
-            return random.randint(0, len(espaco_acoes) + 1)
+            return random.randint(0, espaco_acoes + 1)
 
         q_values = [self.q_value(estado, acao) for acao in acoes]
         
