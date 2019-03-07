@@ -48,7 +48,7 @@ class DeepQLearningAgent(object):
 
         return vetor
 
-    def q_value(self, estado, acao):
+    def q_value(self, estado, acao, epsilon):
         """
             Alimenta o modelo com um estado e uma ação, de forma a obter na saída o Q(s, a).
                 ::estado:
@@ -56,35 +56,31 @@ class DeepQLearningAgent(object):
         """
         return self.model.predict([estado + acao])        
 
-    def acao(estado, acoes, epsilon, funcao_historico):
+    def acao(estado, acoes, epsilon, espaco_acoes):
         """
             Seletor de ações.
             ::estado:
             ::acoes:
             ::epsilon:
                 Probabilidade de escolher uma ação aleatória.
-            ::historico:
-                retorna um valor igual ao número de vezes o agente selecionou a ação a no estado s na atual execução.
-                o histórico penaliza os pares estado-ação já visitados.
         """
     
         if np.random.random() < epsilon:
             return random.randint(0, len(espaco_acoes) + 1)
 
         q_values = [self.q_value(estado, acao) for acao in acoes]
-
+        
         # normaliza Q-values de [-1, 1] para [0, 1]
         q_values = (q_values + 1) / 2
-
-        # Aplica a função histórico
-        q = funcao_historico(s, a) + 1 for q in q_values
 
         # normaliza Q-values de [0, 1] para [-1, 1]
         q_values = (q_values * 2) - 1
 
-        return max(q_values)
+        q_values = np.array(q_values)
 
-    def treino(self, episodios = 256: int, epsilon = 1.0: float, epsilon_decay = 0.99: float,
+        return np.argmax(q_values)
+
+    def treino(self, episodios = 256: int, batch_size = 64: int, epsilon = 1.0: float, epsilon_decay = 0.99: float,
                    taxa_aprendizado = 0.0002: float, gamma = 0.95: float):
         """
             Realiza o treinamento do Agente.
@@ -100,27 +96,24 @@ class DeepQLearningAgent(object):
 
             reforco_acumulado = 0
             while not terminado:
-                if epsilon < np.random.random():
-                    acao = np.random.randint(dimensao_acao)
-                else:
-                    acao = self.model.predict(estado)
+                acao = self.acao(estado, acao)
 
                 proximo_estado_texto, proxima_acao_texto, reforco, prox_dimensao_acao, terminado = jogo.transicao_estado(acao)
                 proximo_estado, proxima_acao = self.transforma(proximo_estado_texto, proxima_acao_texto)                
 
-                Q_target = reforco + gamma * self.Q(proximo_estado, proxima_acao)
+                Q_target = reforco + gamma * self.acao(proximo_estado, proxima_acao)
 
-                self.model.fit(estado, Q_target, epochs = 10, verbose = False)
+                self.model.fit(estado, Q_target, epochs = 10, verbose = False, batch_size = 64)
 
                 estado = proximo_estado
                 acao = proxima_acao
                 dimensao_acao = prox_dimensao_acao
-                eps *= epsilon_decay
                 reforco_acumulado += reforco
 
             print("Episódio {0}: Reforço acumulado de {1}".format(episodio, reforco_acumulado))
             estat_reforcos = {episodio: reforco_acumulado}
-   
+            eps *= epsilon_decay
+
 
 if __name__ == '__main__':
     agente = DeepQLearningAgente()
