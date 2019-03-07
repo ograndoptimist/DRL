@@ -15,10 +15,10 @@ class DeepQLearningAgente(object):
     def __init__(self):
         with open('vocabulario.txt', 'r') as arquivo:
             vocabulario = arquivo.read()
-            vocabulario = list(vocabulario.split())
-            tokens = tokenizacao(vocabulario)
-            self.dicionario_de_tokens = palavraParaIndice(tokens)
-
+            vocabulario = ''.join(vocabulario)
+            vocabulario = vocabulario.split()
+            self.dicionario_de_tokens = palavraParaIndice(vocabulario)
+            
         self.model = self.modelo()
 
     def modelo(self, dimensoes_embedding = 16, dimensoes_lstm = 32, numero_maximo_palavras = 269, dropout_rate = 0.5):
