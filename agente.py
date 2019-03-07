@@ -32,7 +32,7 @@ class DeepQLearningAgente(object):
         model.add(LSTM(dimensoes_lstm))
         model.add(Dense(8, activation = 'tanh'))        
 
-        model.compile(optimizer = 'rmsprop', loss_function = 'mse', metrics = ['acc'])
+        model.compile(optimizer = 'rmsprop', loss = 'mse', metrics = ['acc'])
         
         return model
 
@@ -57,7 +57,7 @@ class DeepQLearningAgente(object):
         """
         return self.model.predict([estado + acao])        
 
-    def acao(estado, acoes, epsilon, espaco_acoes):
+    def acao(self, estado, acoes, epsilon, espaco_acoes):
         """
             Seletor de ações.
             ::estado:
