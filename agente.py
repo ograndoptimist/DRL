@@ -103,7 +103,7 @@ class DeepQLearningAgent(object):
 
                 Q_target = reforco + gamma * self.acao(proximo_estado, proxima_acao)
 
-                self.model.fit(estado, Q_target, epochs = 10, verbose = False, batch_size = 64)
+                self.model.fit(estado, Q_target, epochs = 10, batch_size = batch_size, verbose = False)
 
                 estado = proximo_estado
                 acao = proxima_acao
