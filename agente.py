@@ -12,7 +12,7 @@ class DeepQLearningAgente(object):
         Implementação de um Agente Artificial utilizando-se de Reinforcement Learning e Deep Learning.
         É utilizado o algoritmo off-policy Q-Learning para treinar uma Rede Neural baseada em LSTM.
     """
-    def __init__(self, dimensoes_embedding, dimensoes_lstm):
+    def __init__(self):
         with open('vocabulario.txt', 'r') as arquivo:
             vocabulario = arquivo.read()
             vocabulario = list(vocabulario.split())
