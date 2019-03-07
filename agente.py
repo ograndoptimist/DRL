@@ -19,7 +19,7 @@ class DeepQLearningAgente(object):
             tokens = tokenizacao(vocabulario)
             self.dicionario_de_tokens = palavraParaIndice(tokens)
 
-        self.model = self.modelo(dimensoes_embedding, dimensoes_lstm, dropout_rate)
+        self.model = self.modelo()
 
     def modelo(self, dimensoes_embedding = 16, dimensoes_lstm = 32, numero_maximo_palavras = 269, dropout_rate = 0.5):
         """
