@@ -113,10 +113,10 @@ class DeepQLearningAgente(object):
             acao = [None] * batch_size  
             Q_target = np.zeros((batch_size, 1))            
             reforco_acumulado = 0
+            
+            jogo = AdmiravelMundoNovo()
 
             for passo in range(batch_size):
-                jogo = AdmiravelMundoNovo()
-
                 estado_texto, acao_texto, dimensao_acao, reforco, terminado = jogo.read()
                 estado_ = self.transforma(estado_texto)
                 acao_ = self.transforma(acao_texto)
