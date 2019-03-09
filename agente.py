@@ -143,7 +143,7 @@ class DeepQLearningAgente(object):
                     break
 
             estado = pad_sequences(estado)
-            acao = pad_sequences(acao)
+            acao = pad_sequences(acao)           
 
             self.modelo.fit([estado, acao], Q_target_, epochs = 1, verbose = False)
 
