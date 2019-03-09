@@ -41,7 +41,7 @@ class DeepQLearningAgente(object):
 
         fusao = concatenate([lstm_estado, lstm_acao], axis = -1)
         
-        output = Dense(1, activation = 'relu')(fusao)
+        output = Dense(1, activation = 'tanh')(fusao)
 
         modelo = Model([estado, acao], output)
 
@@ -107,43 +107,40 @@ class DeepQLearningAgente(object):
         """
         eps = epsilon
         estat_reforcos = dict()
+
         for episodio in range(1, episodios + 1):
             estado = [None] * batch_size 
             acao = [None] * batch_size  
-            Q_target = np.zeros((batch_size, 1)) 
-
-            jogo = AdmiravelMundoNovo()
-
-            estado_texto, acao_texto, dimensao_acao, reforco, terminado = jogo.read()
-            estado_ = self.transforma(estado_texto)
-            acao_ = self.transforma(acao_texto)
-            
+            Q_target = np.zeros((batch_size, 1))            
             reforco_acumulado = 0
+
             for passo in range(batch_size):
-                escolha = self.acao(estado, acao, eps, dimensao_acao)
+                jogo = AdmiravelMundoNovo()
 
-                jogo.transicao_estado(escolha)
-                proximo_estado_texto, proxima_acao_texto, prox_dimensao_acao, reforco, terminado = jogo.read()
+                estado_texto, acao_texto, dimensao_acao, reforco, terminado = jogo.read()
+                estado_ = self.transforma(estado_texto)
+                acao_ = self.transforma(acao_texto)
+                
+                escolha = self.acao(estado, acao, eps, dimensao_acao)                       
 
+                proximo_estado_texto, proxima_acao_texto, prox_dimensao_acao, reforco, terminado = jogo.simulacao()
                 proximo_estado = self.transforma(proximo_estado_texto)
                 proxima_acao = self.transforma(proxima_acao_texto) 
 
                 target = reforco + gamma * self.acao(proximo_estado, proxima_acao, eps, prox_dimensao_acao)
-                               
-                estado_ = proximo_estado
-                acao_ = proxima_acao
-                dimensao_acao = prox_dimensao_acao
-                reforco_acumulado += reforco
-                
+
                 estado[passo] = estado_
                 acao[passo] = acao_[escolha]
-                Q_target[passo] = target
+                Q_target[passo] = target                               
+                reforco_acumulado += reforco        
 
                 if terminado:
                     break
 
+                jogo.transicao_estado(escolha)
+
             estado = pad_sequences(estado)
-            acao = pad_sequences(acao)           
+            acao = pad_sequences(acao)
 
             self.modelo.fit([estado, acao], Q_target_, epochs = 1, verbose = False)
 
