@@ -142,7 +142,7 @@ class DeepQLearningAgente(object):
             estado = pad_sequences(estado)
             acao = pad_sequences(acao)
 
-            self.modelo.fit([estado, acao], Q_target_, epochs = 1, verbose = False)
+            self.modelo.fit([estado, acao], Q_target, epochs = 1, verbose = False)
 
             print("Episódio {0}: Reforço acumulado de {1}".format(episodio, reforco_acumulado))
             estat_reforcos = {episodio: reforco_acumulado}
