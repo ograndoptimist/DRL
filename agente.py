@@ -1,9 +1,10 @@
 from simulador import AdmiravelMundoNovo
 import numpy as np
-from keras.models import Sequential
-from keras.layers import Embedding, Dense, LSTM
+from keras import Input
+from keras.models import Model
+from keras.layers import concatenate, Embedding, Dense, LSTM
+from keras.preprocessing.sequence import pad_sequences
 from utilidades import preprocessamento, tokenizacao, palavraParaIndice, vetorizacao
-import random
 
 
 
@@ -19,21 +20,34 @@ class DeepQLearningAgente(object):
             vocabulario = vocabulario.split()
             self.dicionario_de_tokens = palavraParaIndice(vocabulario)
                         
-        self.model = self.modelo()
+        self.modelo = self.cria_modelo()
 
-    def modelo(self, dimensoes_embedding = 32, dimensoes_lstm = 32, numero_maximo_palavras = 269):
+    def cria_modelo(self, dimensoes_embedding = 32, dimensoes_lstm = 32, numero_maximo_palavras = 269):
         """
             Implementa a rede neural que escolhe a ação a ser realizada no corrente estado.
         """
-        model = Sequential()
+        estado = Input(batch_shape = (None, None), name = 'estado')
+        acao = Input(batch_shape = (None, None), name = 'acao')
 
-        model.add(Embedding(numero_maximo_palavras, dimensoes_embedding))
-        model.add(LSTM(dimensoes_lstm))
-        model.add(Dense(1, activation = 'tanh'))        
+        embedding_compartilhada = Embedding(numero_maximo_palavras, dimensoes_embedding)
 
-        model.compile(optimizer = 'rmsprop', loss = 'mse', metrics = ['acc'])
+        embedding_estado = embedding_compartilhada(estado)
+        embedding_acao = embedding_compartilhada(acao)
+
+        lstm_compartilhada = LSTM(dimensoes_lstm)
+
+        lstm_estado = lstm_compartilhada(embedding_estado)
+        lstm_acao = lstm_compartilhada(embedding_acao)
+
+        fusao = concatenate([lstm_estado, lstm_acao], axis = -1)
         
-        return model
+        output = Dense(1, activation = 'relu')(fusao)
+
+        modelo = Model([estado, acao], output)
+
+        modelo.compile(optimizer = 'rmsprop', loss = 'mse', metrics = ['acc'])
+
+        return modelo           
 
     def transforma(self, texto):
         """
@@ -60,7 +74,7 @@ class DeepQLearningAgente(object):
                 ::estado:
                 ::acao:
         """
-        return self.model.predict([estado + acao])        
+        return self.model.predict([estado, acao])        
 
     def acao(self, estado, acoes, epsilon, espaco_acoes):
         """
@@ -72,7 +86,7 @@ class DeepQLearningAgente(object):
         """
     
         if np.random.random() < epsilon:
-            return random.randint(0, espaco_acoes + 1)
+            return np.random.randint(0, espaco_acoes)
 
         q_values = [self.q_value(estado, acao) for acao in acoes]
         
@@ -94,30 +108,44 @@ class DeepQLearningAgente(object):
         eps = epsilon
         estat_reforcos = dict()
         for episodio in range(1, episodios + 1):
+            estado = [None] * batch_size 
+            acao = [None] * batch_size  
+            Q_target = np.zeros((batch_size, 1)) 
+
             jogo = AdmiravelMundoNovo()
 
-            estado_texto, acao_texto, reforco, dimensao_acao, terminado = jogo.read()
-            estado = self.transforma(estado_texto)
-            acao = self.transforma(acao_texto)
-
+            estado_texto, acao_texto, dimensao_acao, reforco, terminado = jogo.read()
+            estado_ = self.transforma(estado_texto)
+            acao_ = self.transforma(acao_texto)
+            
             reforco_acumulado = 0
-            while not terminado:
+            for passo in range(batch_size):
                 escolha = self.acao(estado, acao, eps, dimensao_acao)
 
                 jogo.transicao_estado(escolha)
-                proximo_estado_texto, proxima_acao_texto, reforco, prox_dimensao_acao, terminado = jogo.read()
+                proximo_estado_texto, proxima_acao_texto, prox_dimensao_acao, reforco, terminado = jogo.read()
 
                 proximo_estado = self.transforma(proximo_estado_texto)
                 proxima_acao = self.transforma(proxima_acao_texto) 
 
-                Q_target = reforco + gamma * self.acao(proximo_estado, proxima_acao, eps, prox_dimensao_acao)
-
-                self.model.fit([estado + acao], Q_target, epochs = 10, batch_size = batch_size, verbose = False)
-
-                estado = proximo_estado
-                acao = proxima_acao
+                target = reforco + gamma * self.acao(proximo_estado, proxima_acao, eps, prox_dimensao_acao)
+                               
+                estado_ = proximo_estado
+                acao_ = proxima_acao
                 dimensao_acao = prox_dimensao_acao
                 reforco_acumulado += reforco
+                
+                estado[passo] = estado_
+                acao[passo] = acao_[escolha]
+                Q_target[passo] = target
+
+                if terminado:
+                    break
+
+            estado = pad_sequences(estado)
+            acao = pad_sequences(acao)
+
+            self.modelo.fit([estado, acao], Q_target_, epochs = 1, verbose = False)
 
             print("Episódio {0}: Reforço acumulado de {1}".format(episodio, reforco_acumulado))
             estat_reforcos = {episodio: reforco_acumulado}
