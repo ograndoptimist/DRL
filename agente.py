@@ -86,7 +86,7 @@ class DeepQLearningAgente(object):
         """
     
         if np.random.random() < epsilon:
-            return np.random.randint(0, espaco_acoes)
+            return np.random.randint(0, espaco_acoes + 1)
 
         q_values = [self.q_value(estado, acao) for acao in acoes]
         
@@ -113,7 +113,7 @@ class DeepQLearningAgente(object):
             acao = [None] * batch_size  
             Q_target = np.zeros((batch_size, 1))            
             reforco_acumulado = 0
-            
+
             jogo = AdmiravelMundoNovo()
 
             for passo in range(batch_size):
@@ -123,7 +123,7 @@ class DeepQLearningAgente(object):
                 
                 escolha = self.acao(estado, acao, eps, dimensao_acao)                       
 
-                proximo_estado_texto, proxima_acao_texto, prox_dimensao_acao, reforco, terminado = jogo.simulacao()
+                proximo_estado_texto, proxima_acao_texto, prox_dimensao_acao, reforco, terminado = jogo.simulacao(escolha)
                 proximo_estado = self.transforma(proximo_estado_texto)
                 proxima_acao = self.transforma(proxima_acao_texto) 
 
