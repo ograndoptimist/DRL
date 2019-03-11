@@ -44,7 +44,7 @@ class DeepQLearningAgente(object):
 
         camada_dropout = Dropout(dropout_rate)(fusao)
         
-        output = Dense(1, activation = 'tanh')(fusao)
+        output = Dense(1, activation = 'relu')(fusao)
 
         modelo = Model([estado, acao], output)
 
@@ -108,15 +108,9 @@ class DeepQLearningAgente(object):
             else:
                 q_values = [self.q_value(estado, acao, epsilon) for acao in acoes]
                     
-        q_values = np.array(q_values)
-        
-        # normaliza Q-values de [-1, 1] para [0, 1]
-        q_values = (q_values + 1) / 2
+        q_values = np.array(q_values)        
 
-        # normaliza Q-values de [0, 1] para [-1, 1]
-        q_values = (q_values * 2) - 1
-
-        return np.argmax(q_values) if mode == 0 else (max(q_values) if isinstance(q_values, np.ndarray) else q_values)       
+        return np.argmax(q_values) if mode == 0 else (max(q_values) if isinstance(q_values, np.ndarray) and q_values.ndim != 0 else q_values)       
 
     def treino(self, episodios = 256, batch_size = 64, epsilon = 1.0, epsilon_decay = 0.99,
                    taxa_aprendizado = 0.0002, gamma = 0.95):
