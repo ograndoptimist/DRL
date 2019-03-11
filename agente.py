@@ -2,7 +2,7 @@ from simulador import AdmiravelMundoNovo
 import numpy as np
 from keras import Input
 from keras.models import Model
-from keras.layers import concatenate, Embedding, Dense, LSTM
+from keras.layers import concatenate, Embedding, Dense, Dropout, LSTM
 from keras.preprocessing.sequence import pad_sequences
 from utilidades import preprocessamento, tokenizacao, palavraParaIndice, vetorizacao
 import matplotlib.pyplot as plt
@@ -23,7 +23,7 @@ class DeepQLearningAgente(object):
                         
         self.modelo = self.cria_modelo()
 
-    def cria_modelo(self, dimensoes_embedding = 32, dimensoes_lstm = 32, numero_maximo_palavras = 269):
+    def cria_modelo(self, dimensoes_embedding = 32, dimensoes_lstm = 32, dropout_rate = 0.5, numero_maximo_palavras = 269):
         """
             Implementa a rede neural que escolhe a ação a ser realizada no corrente estado.
         """
@@ -41,6 +41,8 @@ class DeepQLearningAgente(object):
         lstm_acao = lstm_compartilhada(embedding_acao)
 
         fusao = concatenate([lstm_estado, lstm_acao], axis = -1)
+
+        camada_dropout = Dropout(dropout_rate)(fusao)
         
         output = Dense(1, activation = 'tanh')(fusao)
 
