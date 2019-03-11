@@ -5,6 +5,7 @@ from keras.models import Model
 from keras.layers import concatenate, Embedding, Dense, LSTM
 from keras.preprocessing.sequence import pad_sequences
 from utilidades import preprocessamento, tokenizacao, palavraParaIndice, vetorizacao
+import matplotlib.pyplot as plt
 
 
 
@@ -68,15 +69,17 @@ class DeepQLearningAgente(object):
 
         return vetor
 
-    def q_value(self, estado, acao, epsilon):
+    def q_value(self, estado_q_value, acao_q_value, epsilon):
         """
             Alimenta o modelo com um estado e uma ação, de forma a obter na saída o Q(s, a).
                 ::estado:
                 ::acao:
         """
-        return self.model.predict([estado, acao])        
+        estado_q_value = np.array(estado_q_value)
+        acao_q_value = np.array(acao_q_value)
+        return self.modelo.predict([estado_q_value.reshape((1, len(estado_q_value))), acao_q_value.reshape((1, len(acao_q_value)))])[0][0]      
 
-    def acao(self, estado, acoes, epsilon, espaco_acoes):
+    def acao(self, estado_acao, acoes_acao, epsilon_acao, espaco_acoes_acao):
         """
             Seletor de ações.
             ::estado:
@@ -85,10 +88,21 @@ class DeepQLearningAgente(object):
                 Probabilidade de escolher uma ação aleatória.
         """
     
-        if np.random.random() < epsilon:
-            return np.random.randint(0, espaco_acoes + 1)
+        if np.random.random() < epsilon_acao:
+            if espaco_acoes_acao in [0, 1]:
+                return 0
+            else:
+                return np.random.randint(0, espaco_acoes_acao)
 
-        q_values = [self.q_value(estado, acao) for acao in acoes]
+        estado_acao = np.array(estado_acao)
+        acoes_acao = np.array(acoes_acao)
+
+        if len(acoes_acao) == 1:
+            q_values =  self.q_value(estado_acao, acoes_acao[0], epsilon_acao)
+        else:
+            q_values = [self.q_value(estado_acao, acao, epsilon_acao) for acao in acoes_acao]
+        
+        q_values = np.array(q_values)
         
         # normaliza Q-values de [-1, 1] para [0, 1]
         q_values = (q_values + 1) / 2
@@ -96,9 +110,25 @@ class DeepQLearningAgente(object):
         # normaliza Q-values de [0, 1] para [-1, 1]
         q_values = (q_values * 2) - 1
 
-        q_values = np.array(q_values)
-
         return np.argmax(q_values)
+
+    def calc_q_value(self, estado_calc_q_value, acoes_calc_q_value, epsilon_calc_q_value):
+        if len(acoes_calc_q_value) == 0:
+            return 0
+        elif len(acoes_calc_q_value) == 1: 
+            q_values_calc_q_value =  self.q_value(estado_calc_q_value, acoes_calc_q_value[0], epsilon_calc_q_value)
+        else:
+            q_values_calc_q_value = [self.q_value(estado_calc_q_value, acao, epsilon_calc_q_value) for acao in acoes_calc_q_value]
+                    
+        q_values_calc_q_value = np.array(q_values_calc_q_value)
+        
+        # normaliza Q-values de [-1, 1] para [0, 1]
+        q_values_calc_q_value = (q_values_calc_q_value + 1) / 2
+
+        # normaliza Q-values de [0, 1] para [-1, 1]
+        q_values_calc_q_value = (q_values_calc_q_value * 2) - 1
+
+        return max(q_values_calc_q_value) if isinstance(q_values_calc_q_value, np.ndarray) else q_values_calc_q_value     
 
     def treino(self, episodios = 256, batch_size = 64, epsilon = 1.0, epsilon_decay = 0.99,
                    taxa_aprendizado = 0.0002, gamma = 0.95):
@@ -113,6 +143,7 @@ class DeepQLearningAgente(object):
             acao = [None] * batch_size  
             Q_target = np.zeros((batch_size, 1))            
             reforco_acumulado = 0
+            cont = 0
 
             jogo = AdmiravelMundoNovo()
 
@@ -120,15 +151,15 @@ class DeepQLearningAgente(object):
                 estado_texto, acao_texto, dimensao_acao, reforco, terminado = jogo.read()
                 estado_ = self.transforma(estado_texto)
                 acao_ = self.transforma(acao_texto)
-                
-                escolha = self.acao(estado, acao, eps, dimensao_acao)                       
 
-                proximo_estado_texto, proxima_acao_texto, prox_dimensao_acao, reforco, terminado = jogo.simulacao(escolha)
+                escolha = self.acao(estado_, acao_, eps, dimensao_acao)
+                                
+                proximo_estado_texto, proximas_acoes_texto, prox_dimensao_acao, reforco, terminado = jogo.simulacao(escolha)
                 proximo_estado = self.transforma(proximo_estado_texto)
-                proxima_acao = self.transforma(proxima_acao_texto) 
-
-                target = reforco + gamma * self.acao(proximo_estado, proxima_acao, eps, prox_dimensao_acao)
-
+                proximas_acoes = self.transforma(proximas_acoes_texto)
+                
+                target = reforco + gamma * self.calc_q_value(proximo_estado, proximas_acoes, eps)
+                
                 estado[passo] = estado_
                 acao[passo] = acao_[escolha]
                 Q_target[passo] = target                               
@@ -138,17 +169,26 @@ class DeepQLearningAgente(object):
                     break
 
                 jogo.transicao_estado(escolha)
+                cont += 1
+                
+            estado = pad_sequences(estado[:cont + 1])
+            acao = pad_sequences(acao[:cont + 1])
 
-            estado = pad_sequences(estado)
-            acao = pad_sequences(acao)
-
-            self.modelo.fit([estado, acao], Q_target, epochs = 1, verbose = False)
+            self.modelo.fit([estado, acao], Q_target[:cont + 1], epochs = 1, verbose = False)
 
             print("Episódio {0}: Reforço acumulado de {1}".format(episodio, reforco_acumulado))
-            estat_reforcos = {episodio: reforco_acumulado}
+            estat_reforcos.update({episodio: reforco_acumulado})
             eps *= epsilon_decay
+
+        return estat_reforcos            
 
 
 if __name__ == '__main__':
     agente = DeepQLearningAgente()
-    agente.treino()
+    teste = agente.treino()
+
+    plt.plot(teste.keys(), teste.values())
+    plt.title('Episodios x Reforços')
+    plt.xlabel('Episodios')
+    plt.ylabel('Reforços Acumulados')
+    plt.savefig('teste.png')
