@@ -81,7 +81,7 @@ class DeepQLearningAgente(object):
         acao_q_value = np.array(acao_q_value)
         return self.modelo.predict([estado_q_value.reshape((1, len(estado_q_value))), acao_q_value.reshape((1, len(acao_q_value)))])[0][0]      
 
-    def acao(self, estado_acao, acoes_acao, epsilon_acao, espaco_acoes_acao):
+    def acao(self, estado, acoes, epsilon, espaco_acoes, mode):
         """
             Seletor de ações.
             ::estado:
@@ -89,21 +89,25 @@ class DeepQLearningAgente(object):
             ::epsilon:
                 Probabilidade de escolher uma ação aleatória.
         """
-    
-        if np.random.random() < epsilon_acao:
-            if espaco_acoes_acao in [0, 1]:
-                return 0
-            else:
-                return np.random.randint(0, espaco_acoes_acao)
+        if mode == 0:
+            if np.random.random() < epsilon:
+                if espaco_acoes in [0, 1]:
+                    return 0
+                else:
+                    return np.random.randint(0, espaco_acoes)
 
-        estado_acao = np.array(estado_acao)
-        acoes_acao = np.array(acoes_acao)
+            estado_acao = np.array(estado)
+            acoes_acao = np.array(acoes)
 
-        if len(acoes_acao) == 1:
-            q_values =  self.q_value(estado_acao, acoes_acao[0], epsilon_acao)
+            q_values = self.q_value(estado, acoes[0], epsilon) if len(acoes) == 1 else [self.q_value(estado, acao, epsilon) for acao in acoes]        
         else:
-            q_values = [self.q_value(estado_acao, acao, epsilon_acao) for acao in acoes_acao]
-        
+            if len(acoes) == 0:
+                return 0
+            elif len(acoes) == 1: 
+                q_values =  self.q_value(estado, acoes[0], epsilon)
+            else:
+                q_values = [self.q_value(estado, acao, epsilon) for acao in acoes]
+                    
         q_values = np.array(q_values)
         
         # normaliza Q-values de [-1, 1] para [0, 1]
@@ -112,25 +116,7 @@ class DeepQLearningAgente(object):
         # normaliza Q-values de [0, 1] para [-1, 1]
         q_values = (q_values * 2) - 1
 
-        return np.argmax(q_values)
-
-    def calc_q_value(self, estado_calc_q_value, acoes_calc_q_value, epsilon_calc_q_value):
-        if len(acoes_calc_q_value) == 0:
-            return 0
-        elif len(acoes_calc_q_value) == 1: 
-            q_values_calc_q_value =  self.q_value(estado_calc_q_value, acoes_calc_q_value[0], epsilon_calc_q_value)
-        else:
-            q_values_calc_q_value = [self.q_value(estado_calc_q_value, acao, epsilon_calc_q_value) for acao in acoes_calc_q_value]
-                    
-        q_values_calc_q_value = np.array(q_values_calc_q_value)
-        
-        # normaliza Q-values de [-1, 1] para [0, 1]
-        q_values_calc_q_value = (q_values_calc_q_value + 1) / 2
-
-        # normaliza Q-values de [0, 1] para [-1, 1]
-        q_values_calc_q_value = (q_values_calc_q_value * 2) - 1
-
-        return max(q_values_calc_q_value) if isinstance(q_values_calc_q_value, np.ndarray) else q_values_calc_q_value     
+        return np.argmax(q_values) if mode == 0 else (max(q_values) if isinstance(q_values, np.ndarray) else q_values)       
 
     def treino(self, episodios = 256, batch_size = 64, epsilon = 1.0, epsilon_decay = 0.99,
                    taxa_aprendizado = 0.0002, gamma = 0.95):
@@ -154,13 +140,13 @@ class DeepQLearningAgente(object):
                 estado_ = self.transforma(estado_texto)
                 acao_ = self.transforma(acao_texto)
 
-                escolha = self.acao(estado_, acao_, eps, dimensao_acao)
+                escolha = self.acao(estado_, acao_, eps, dimensao_acao, mode = 0)
                                 
                 proximo_estado_texto, proximas_acoes_texto, prox_dimensao_acao, reforco, terminado = jogo.simulacao(escolha)
                 proximo_estado = self.transforma(proximo_estado_texto)
                 proximas_acoes = self.transforma(proximas_acoes_texto)
                 
-                target = reforco + gamma * self.calc_q_value(proximo_estado, proximas_acoes, eps)
+                target = reforco + gamma * self.acao(proximo_estado, proximas_acoes, eps, prox_dimensao_acao, mode = 1)
                 
                 estado[passo] = estado_
                 acao[passo] = acao_[escolha]
