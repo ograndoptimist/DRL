@@ -4,6 +4,7 @@
     \tpara tarefas de Processamento de Linguagem Natural em língua portuguesa.
     \tAutor: Gabriel Pontes (@ograndoptimist)       Mentora: Karla Figueiredo
 """
+from textos import ESTADOS, ACOES, REFORCOS, FINALIZADO, DIMENSOES
 
 print(__doc__)
 
@@ -11,10 +12,15 @@ class AdmiravelMundoNovo(object):
     def __init__(self):
         self.reforco = 0
         self.checa_estado = False
-        self.estado_texto = ""
-        self.estado_acao = ""
+        self.estado_texto = None
+        self.estado_acao = None
         self.finalizado = False
         self.espaco_acoes = 0
+        self.estados_texto = ESTADOS
+        self.acao_textos =  ACOES
+        self.acao_dimensoes = DIMENSOES
+        self.estados_reforcos = REFORCOS
+        self.estados_finalizado = FINALIZADO
 
         self.estado_inicial()
 
@@ -51,126 +57,128 @@ class AdmiravelMundoNovo(object):
             self.estado_final()            
 
     def estado_inicial(self):
-        self.reforco_imediato = 0
+        self.reforco_imediato = self.estados_reforcos['estado_inicial']
         self.reforco += self.reforco_imediato
         self.valor_estado = 1
-        self.finalizado = False
-        self.estado_texto = "\tPrimeiro desafio\n\tVocê está na entrada da ilha da Fantasia. O objetivo do jogo é coletar a chave preciosa de ouro.\n\tPara tal, você precisa vasculhar os andares do Castelo Principal. Logo a sua frente há uma ponte\n\tque dá acesso à entrada do Castelo principal."
-        self.estado_acao = ["Atravesse a ponte."]
-        self.espaco_acoes = len(self.estado_acao)
-        
+        self.finalizado = self.estados_finalizado['estado_inicial']
+        self.estado_texto = self.estados_texto['estado_inicial']
+        self.estado_acao = self.acao_textos['estado_inicial']
+        self.espaco_acoes = self.acao_dimensoes['estado_inicial']
+                
     def estado_1(self):
-        self.reforco_imediato = 1
+        self.reforco_imediato = self.estados_reforcos['estado_1']
         self.reforco += self.reforco_imediato
         self.valor_estado = 2
-        self.finalizado = False
-        self.estado_texto = "\tEntrada do Castelo.\n\tAgora você está na porta principal do Castelo. O Castelo possui 3 andares que você pode explorar\n\tatravés de belíssimas escadas. Em um desses três andares, está o tesouro que procuras..."
-        self.estado_acao = ["Abra a porta.", "Vá para o leste.", "Vá para o oeste."]
-        self.espaco_acoes = len(self.estado_acao)
+        self.finalizado = self.estados_finalizado['estado_inicial']
+        self.estado_texto = self.estados_texto['estado_1']
+        self.estado_acao = self.acao_textos['estado_1']
+        self.espaco_acoes = self.acao_dimensoes['estado_1']
         
     def estado_leste(self):
-        self.reforco_imediato = 1
+        self.reforco_imediato = self.estados_reforcos['estado_leste']
         self.reforco += self.reforco_imediato
         self.valor_estado = 2.25
-        self.finalizado = False
-        self.estado_texto = "\tJardim do Castelo\n\tNo Jardim do Castelo você tem acesso as mais belas plantas de todo o reino. Aqui temos flores, maçãs....e quem sabe uma\n\tpassagem secreta até o tesouro mais procurado nestes tempos...."
-        self.estado_acao = ["Volte para a entrada do Castelo.", "Vá para a passagem secreta."]
-        self.espaco_acoes = len(self.estado_acao)
+        self.finalizado = self.estados_finalizado['estado_inicial']
+        self.estado_texto = self.estados_texto['estado_leste']
+        self.estado_acao = self.acao_textos['estado_leste']
+        self.espaco_acoes = self.acao_dimensoes['estado_leste']
         
     def estado_oeste(self):
-        self.reforco_imediato = 0
+        self.reforco_imediato = self.estados_reforcos['estado_oeste']
         self.reforco += self.reforco_imediato
         self.valor_estado = 2.5
-        self.finalizado = False
-        self.estado_texto = "\tMosteiro dos Bravos Cavalos\n\tVocê pode aproveitar que chegou até aqui e ajudar o zelador a manter os cavalos com os mais belos cortes de crina.\n\tNo entanto, tomaria cuidado para não toma nenhum coice, já que aqui também se\n\tencontram os cavalos mais selvagens do Reino da Ilha da Fantasia..."
-        self.estado_acao = ["Volte para a entrada do Castelo."]
-        self.espaco_acoes = len(self.estado_acao)
+        self.finalizado = self.estados_finalizado['estado_inicial']
+        self.estado_texto = self.estados_texto['estado_oeste']
+        self.estado_acao = self.acao_textos['estado_oeste']
+        self.espaco_acoes = self.acao_dimensoes['estado_oeste']
         
     def estado_passagem_secreta(self):
-        self.reforco_imediato = 10
+        self.reforco_imediato = self.estados_reforcos['estado_passagem_secreta']
         self.reforco += self.reforco_imediato
         self.valor_estado = 2.75
-        self.finalizado = False
+        self.finalizado = self.estados_finalizado['estado_inicial']
         print("\tReforço: 10")
-        self.estado_texto = "\tA passagem secreta\n\tDaqui em diante, o teletransporte do castelo se encarrega do trabalho de te aproximar do tesouro que procuras.\n\tTalvez o melhor seja sempre seguir em frente, já que a vida imita a arte...\n\tmas a escolha está em suas mãos..."
-        self.estado_acao = ["Seguir em frente.", "Voltar para o jardim."]
-        self.espaco_acoes = len(self.estado_acao)
+        self.estado_texto = self.estados_texto['estado_passagem_secreta']
+        self.estado_acao = self.acao_textos['estado_passagem_secreta']
+        self.espaco_acoes = self.acao_dimensoes['estado_passagem_secreta']
         
     def estado_2(self):
-        self.reforco_imediato = 1
+        self.reforco_imediato = self.estados_reforcos['estado_2']
         self.reforco += self.reforco_imediato
         self.valor_estado = 3
-        self.finalizado = False
-        self.estado_texto = "\tSalão Principal\n\tBem-vindo ao Salão Principal do Castelo. Nosso Castelo está sempre recebendo as mais belas\n\tdivindades do Reino da Fantasia. O tapete vermelho pode te levar ao salão de jantar se você seguir\n\tà esquerda, ou caso contrário, à direita, você alcança a biblioteca dos mais sábios livros que\n\ttalvez esconda os segredos mais esperados de todo o novo continente.\n\tTambém há a possibilidade de subir as escadas para se chegar ao próximo andar."
-        self.estado_acao = ["Suba as escadas.", "Siga à esquerda.", "Siga à direita."]
-        self.espaco_acoes = len(self.estado_acao)
+        self.finalizado = self.estados_finalizado['estado_inicial']
+        self.estado_texto = self.estados_texto['estado_2']
+        self.estado_acao = self.acao_textos['estado_2']
+        self.espaco_acoes = self.acao_dimensoes['estado_2']
         
     def estado_2_esquerda(self):
-        self.reforco_imediato = 0
+        self.reforco_imediato = self.estados_reforcos['estado_2_esquerda_direita']
         self.reforco += self.reforco_imediato
         self.valor_estado = 3.25
-        self.finalizado = False
-        self.estado_texto = "\tSalão de Jantar\n\tOs mais belos jantares são servidos à nobreza do Reino neste local. Somente os de sangue mais\n\tpuro podem utilizar da louça sobre a mesa. O antigo dono da chave preciosa já esteve por aqui."
-        self.estado_acao = ["Volte ao salão principal."]
-        self.espaco_acoes = len(self.estado_acao)
+        self.finalizado = self.estados_finalizado['estado_inicial']
+        self.estado_texto = self.estados_texto['estado_2_esquerda']
+        self.estado_acao = self.acao_textos['estado_2_esquerda_direita']
+        self.espaco_acoes = self.acao_dimensoes['estado_2_esquerda_direita']
         
     def estado_2_direita(self):
-        self.reforco_imediato = 0
+        self.reforco_imediato = self.estados_reforcos['estado_2_esquerda_direita']
         self.reforco += self.reforco_imediato
         self.valor_estado = 3.5
-        self.finalizado = False
-        self.estado_texto = "\tBiblioteca dos Mais Sábios\n\tPor esta biblioteca já passaram os mais sábios do Reino. Mentes brilhantes produziram obras\n\tque ficarão por aqui por toda a eternidade. Talvez se você ler todos os livros, será capaz de\n\tencontrar a reposta do enigma do paradeiro da chave preciosa de ouro."
-        self.estado_acao = ["Volte ao salão principal."]
-        self.espaco_acoes = len(self.estado_acao)
+        self.finalizado = self.estados_finalizado['estado_inicial']
+        self.estado_texto = self.estados_texto['estado_2_direita']
+        self.estado_acao = self.acao_textos['estado_2_esquerda_direita']
+        self.espaco_acoes = self.acao_dimensoes['estado_2_esquerda_direita']
         
     def estado_3(self):
-        self.reforco_imediato = 1
+        self.reforco_imediato = self.estados_reforcos['estado_3']
         self.reforco += self.reforco_imediato
         self.valor_estado = 4
-        self.finalizado = False
-        self.estado_texto = "\tSegundo andar\n\tVocê conseguiu subir as longas escadas do Castelo Principal e chegar ao andar de travessuras.\n\tEste andar é geralmente povoado pelos bobos da corte, então é melhor ficar atento para evitar\n\tapuros com os mais astutos do povoado."
-        self.estado_acao = ["Suba as escadas.", "Siga à esquerda.", "Siga à direita."]
-        self.espaco_acoes = len(self.estado_acao)
+        self.finalizado = self.estados_finalizado['estado_inicial']
+        self.estado_texto = self.estados_texto['estado_3']
+        self.estado_acao = self.acao_textos['estado_3']
+        self.espaco_acoes = self.acao_dimensoes['estado_3']
         
     def estado_3_esquerda(self):
-        self.reforco_imediato = 0
+        self.reforco_imediato = self.estados_reforcos['estado_3_esquerda_direita']
         self.reforco += self.reforco_imediato
         self.valor_estado = 4.25
-        self.finalizado = False
-        self.estado_texto = "\tTreinamento dos Travessos\n\tCuidado para não atrapalha-los. Aqui eles preparam as melhores perfomances para toda a corte."
-        self.estado_acao = ["Volte ao salão principal."]
-        self.espaco_acoes = len(self.estado_acao)
+        self.finalizado = self.estados_finalizado['estado_inicial']
+        self.estado_texto = self.estados_texto['estado_3_esquerda']
+        self.estado_acao = self.acao_textos['estado_3_esquerda_direita']
+        self.espaco_acoes = self.acao_dimensoes['estado_3_esquerda_direita']
         
     def estado_3_direita(self):
-        self.reforco_imediato = 0
+        self.reforco_imediato = self.estados_reforcos['estado_3_esquerda_direita']
         self.reforco += self.reforco_imediato
         self.valor_estado = 4.5
-        self.finalizado = False
-        self.estado_texto = "\tDormitório dos Travessos\n\tAté nos sonhos os bobos da corte aprontam as mais astutas travessuras. Se eu fosse você tomaria\n\tcuidado para não acordá-los, ou é melhor se preparar para se tornar o palhaço da corte..."
-        self.estado_acao = ["Volte ao salão principal."]
-        self.espaco_acoes = len(self.estado_acao)
+        self.finalizado = self.estados_finalizado['estado_inicial']
+        self.estado_texto = self.estados_texto['estado_3_direita']
+        self.estado_acao = self.acao_textos['estado_3_esquerda_direita']
+        self.espaco_acoes = self.acao_dimensoes['estado_3_esquerda_direita']
         
     def estado_4(self):
-        self.reforco_imediato = 1
+        self.reforco_imediato = self.estados_reforcos['estado_4']
         self.reforco += self.reforco_imediato
         self.valor_estado = 5
-        self.finalizado = False
-        self.estado_texto = "\tSantuário dos sonhos esquecidos\n\tOs sonhos mais profundos viajam pelos quartos deste andar. Aqui o inconsciente se comunica com o\n\tconsciente dos seres do Reino. Dizem por aí que sonharam que a chave estaria por aqui, mas\n\tcabe a você verificar quarto por quarto se é uma verdade ou apenas mais um dos sonhos."
-        self.estado_acao = ["Siga à esquerda.", "Siga à direita."]
-        self.espaco_acoes = len(self.estado_acao)
+        self.finalizado = self.estados_finalizado['estado_inicial']
+        self.estado_texto = self.estados_texto['estado_4']
+        self.estado_acao = self.acao_textos['estado_4']
+        self.espaco_acoes = self.acao_dimensoes['estado_4']
         
     def estado_4_esquerda(self):
+        self.reforco_imediato = self.estados_reforcos['estado_4_esquerda']
         self.reforco -= 10
+        self.finalizado = self.estados_finalizado['estado_inicial']
         print("\tReforço: -10")
         print("\tO esquecimento profundo\n\tEste quarto traz o esquecimento temporário a quem nele adentra. Infelizmente, para aqueles que \n\taqui tem acesso acabam sendo teletransportados para o salão principal do primeiro andar.")
         print()
         self.estado_2()
         
     def estado_final(self):
-        self.reforco_imediato = 100
+        self.reforco_imediato = self.estados_reforcos['estado_final']
         self.reforco += self.reforco_imediato
-        self.finalizado = True
-        self.estado_texto = "\tFinal do jogo.\n\tParabéns! Você conseguiu coletar a chave de ouro preciosa! Sendo assim, o jogo está finalizado!"
+        self.finalizado = self.estados_finalizado['estado_final']
+        self.estado_texto = self.estados_texto['estado_final']
         print("\tReforço acumulado de {0}".format(self.reforco))
         self.estado_acao = ""
         
@@ -194,6 +202,38 @@ class AdmiravelMundoNovo(object):
     def imprimeAcao(self, acoes):
         for cont, acao in enumerate(acoes):
             print("\t[{0}] {1}".format(cont, acao))
+
+    def simulacao(self, acao):
+        if self.valor_estado == 2 and acao == 0:
+            return self.estados_texto['estado_2'], self.acao_textos['estado_2'], self.acao_dimensoes['estado_2'], self.estados_reforcos['estado_2'], self.estados_finalizado['estado_inicial']
+        elif self.valor_estado == 2 and acao == 1:
+            return self.estados_texto['estado_leste'], self.acao_textos['estado_leste'], self.acao_dimensoes['estado_leste'], self.estados_reforcos['estado_leste'], self.estados_finalizado['estado_inicial']
+        elif self.valor_estado in [1, 2.25, 2.5] and acao == 0:
+            return self.estados_texto['estado_1'], self.acao_textos['estado_1'], self.acao_dimensoes['estado_1'], self.estados_reforcos['estado_1'], self.estados_finalizado['estado_inicial']
+        elif self.valor_estado == 2.25 and acao == 1:
+            return self.estados_texto['estado_passagem_secreta'], self.acao_textos['estado_passagem_secreta'], self.acao_dimensoes['estado_passagem_secreta'], self.estados_reforcos['estado_passagem_secreta'], self.estados_finalizado['estado_inicial']
+        elif self.valor_estado == 2 and acao == 2:
+            return self.estados_texto['estado_oeste'], self.acao_textos['estado_oeste'], self.acao_dimensoes['estado_oeste'], self.estados_reforcos['estado_oeste'], self.estados_finalizado['estado_inicial']
+        elif self.valor_estado == 2.75 and acao == 1:
+            return self.estados_texto['estado_leste'], self.acao_textos['estado_leste'], self.acao_dimensoes['estado_leste'], self.estados_reforcos['estado_leste'], self.estados_finalizado['estado_inicial']
+        elif self.valor_estado == 3 and acao == 1:
+            return self.estados_texto['estado_2_esquerda'], self.acao_textos['estado_2_esquerda_direita'], self.acao_dimensoes['estado_2_esquerda_direita'], self.estados_reforcos['estado_2_esquerda_direita'], self.estados_finalizado['estado_inicial']
+        elif self.valor_estado in [3.25, 3.5] and acao == 0:
+            return self.estados_texto['estado_2'], self.acao_textos['estado_2'], self.acao_dimensoes['estado_2'], self.estados_reforcos['estado_2'], self.estados_finalizado['estado_inicial']
+        elif self.valor_estado == 3 and acao == 2:
+            return self.estados_texto['estado_2_direita'], self.acao_textos['estado_2_esquerda_direita'], self.acao_dimensoes['estado_2_esquerda_direita'], self.estados_reforcos['estado_2_esquerda_direita'], self.estados_finalizado['estado_inicial']
+        elif self.valor_estado == 4 and acao == 1:
+            return self.estados_texto['estado_3_esquerda'], self.acao_textos['estado_3_esquerda_direita'], self.acao_dimensoes['estado_3_esquerda_direita'], self.estados_reforcos['estado_3_esquerda_direita'], self.estados_finalizado['estado_inicial']
+        elif self.valor_estado in [3, 4.25, 4.5] and acao == 0:
+            return self.estados_texto['estado_3'], self.acao_textos['estado_3'], self.acao_dimensoes['estado_3'], self.estados_reforcos['estado_3'], self.estados_finalizado['estado_inicial']
+        elif self.valor_estado == 4 and acao == 2:
+            return self.estados_texto['estado_3_direita'], self.acao_textos['estado_3_esquerda_direita'], self.acao_dimensoes['estado_3_esquerda_direita'], self.estados_reforcos['estado_3_esquerda_direita'], self.estados_finalizado['estado_inicial']
+        elif self.valor_estado in [2.75, 4] and acao == 0:
+            return self.estados_texto['estado_4'], self.acao_textos['estado_4'], self.acao_dimensoes['estado_4'], self.estados_reforcos['estado_4'], self.estados_finalizado['estado_inicial']
+        elif self.valor_estado == 5 and acao == 0:
+            return self.estados_texto['estado_4_esquerda'], self.acao_textos['estado_4_esquerda'], self.acao_dimensoes['estado_4_esquerda'], self.estados_reforcos['estado_4_esquerda'], self.estados_finalizado['estado_inicial']
+        elif self.valor_estado == 5 and acao == 1:
+            return self.estados_texto['estado_final'], self.acao_textos['estado_final'], self.acao_dimensoes['estado_final'], self.estados_reforcos['estado_final'], self.estados_finalizado['estado_final']
 
 
 if __name__ == '__main__':
