@@ -4,7 +4,6 @@
 from agente import DeepQLearningAgente
 from simulador import AdmiravelMundoNovo
 import time
-from utilidades import preprocessamento, vetorizacao, tokenizacao
 import matplotlib.pyplot as plt
 from keras.models import load_model
 import numpy as np
