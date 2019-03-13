@@ -89,12 +89,9 @@ class DeepQLearningAgente(object):
             ::epsilon:
                 Probabilidade de escolher uma ação aleatória.
         """
-        if mode == 0:
+        if not mode:
             if np.random.random() < epsilon:
-                if espaco_acoes in [0, 1]:
-                    return 0
-                else:
-                    return np.random.randint(0, espaco_acoes)
+                return np.random.randint(0, espaco_acoes)
 
             estado_acao = np.array(estado)
             acoes_acao = np.array(acoes)
@@ -135,12 +132,16 @@ class DeepQLearningAgente(object):
                 acao_ = self.transforma(acao_texto)
 
                 escolha = self.acao(estado_, acao_, eps, dimensao_acao, mode = 0)
-                                
+
                 proximo_estado_texto, proximas_acoes_texto, prox_dimensao_acao, reforco, terminado = jogo.simulacao(escolha)
                 proximo_estado = self.transforma(proximo_estado_texto)
                 proximas_acoes = self.transforma(proximas_acoes_texto)
-                
-                target = reforco + gamma * self.acao(proximo_estado, proximas_acoes, eps, prox_dimensao_acao, mode = 1)
+
+                if not terminado:
+                    # Q(s, a) = r +  γ  * Q(s', a')
+                    target = reforco + gamma * self.acao(proximo_estado, proximas_acoes, eps, prox_dimensao_acao, mode = 1)
+                else:
+                    target = reforco
                 
                 estado[passo] = estado_
                 acao[passo] = acao_[escolha]
@@ -162,6 +163,7 @@ class DeepQLearningAgente(object):
             estat_reforcos.update({episodio: reforco_acumulado})
             eps *= epsilon_decay
 
+        self.modelo.save('modelo_lstm')
         return estat_reforcos            
 
 
@@ -170,7 +172,7 @@ if __name__ == '__main__':
     teste = agente.treino()
 
     plt.plot(teste.keys(), teste.values())
-    plt.title('Episodios x Reforços')
+    plt.title('Agente de Treino: Episodios x Reforços')
     plt.xlabel('Episodios')
     plt.ylabel('Reforços Acumulados')
-    plt.savefig('teste.png')
+    plt.savefig('treino.png')
