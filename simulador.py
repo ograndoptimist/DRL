@@ -2,8 +2,9 @@
     \tSeja bem-vindo ao Admirável Mundo Novo!
     \tO objetivo do jogo é dar suporte ao desenvolvimento de Agentes Inteligentes que utilizam Deep Reinforcement Learning
     \tpara tarefas de Processamento de Linguagem Natural em língua portuguesa.
-    \tAutor: Gabriel Pontes (@ograndoptimist)       Mentora: Karla Figueiredo
+    \tAutor: Gabriel Pontes (@ograndoptimist)       7
 """
+
 from textos import ESTADOS, ACOES, REFORCOS, FINALIZADO, DIMENSOES
 
 print(__doc__)
@@ -54,7 +55,9 @@ class AdmiravelMundoNovo(object):
         elif self.valor_estado == 5 and acao == 0:
             self.estado_4_esquerda()
         elif self.valor_estado == 5 and acao == 1:
-            self.estado_final()            
+            self.estado_final()
+        elif self.valor_estado == 5.25 and acao == 0:
+            self.estado_4()
 
     def estado_inicial(self):
         self.reforco_imediato = self.estados_reforcos['estado_inicial']
@@ -167,12 +170,17 @@ class AdmiravelMundoNovo(object):
         
     def estado_4_esquerda(self):
         self.reforco_imediato = self.estados_reforcos['estado_4_esquerda']
-        self.reforco -= 10
+        self.reforco -= self.reforco_imediato
+        self.valor_estado = 5.25
         self.finalizado = self.estados_finalizado['estado_inicial']
-        print("\tReforço: -10")
-        print("\tO esquecimento profundo\n\tEste quarto traz o esquecimento temporário a quem nele adentra. Infelizmente, para aqueles que \n\taqui tem acesso acabam sendo teletransportados para o salão principal do primeiro andar.")
-        print()
-        self.estado_2()
+        self.finalizado = self.estados_finalizado['estado_inicial']
+        self.estado_texto = self.estados_texto['estado_4_esquerda']
+        self.estado_acao = self.acao_textos['estado_4_esquerda']
+        self.espaco_acoes = self.acao_dimensoes['estado_4_esquerda']
+        #print("\tReforço: -10")
+        #print("\tO esquecimento profundo\n\tEste quarto traz o esquecimento temporário a quem nele adentra. Infelizmente, para aqueles que \n\taqui tem acesso acabam sendo teletransportados para o salão principal do primeiro andar.")
+        #print()
+        #self.estado_2()
         
     def estado_final(self):
         self.reforco_imediato = self.estados_reforcos['estado_final']
@@ -183,7 +191,7 @@ class AdmiravelMundoNovo(object):
         self.estado_acao = ""
         
     def pacote_acoes(self):
-        if self.valor_estado in [1, 2.5, 3.25, 3.5, 4.25, 4.5]:
+        if self.valor_estado in [1, 2.5, 3.25, 3.5, 4.25, 4.5, 5.25]:
             return [0]
         elif self.valor_estado in [2, 3, 4]: 
             return [0, 1, 2]
@@ -234,6 +242,8 @@ class AdmiravelMundoNovo(object):
             return self.estados_texto['estado_4_esquerda'], self.acao_textos['estado_4_esquerda'], self.acao_dimensoes['estado_4_esquerda'], self.estados_reforcos['estado_4_esquerda'], self.estados_finalizado['estado_inicial']
         elif self.valor_estado == 5 and acao == 1:
             return self.estados_texto['estado_final'], self.acao_textos['estado_final'], self.acao_dimensoes['estado_final'], self.estados_reforcos['estado_final'], self.estados_finalizado['estado_final']
+        elif self.valor_estado == 5.25 and acao == 0:
+            return self.estados_texto['estado_4'], self.acao_textos['estado_4'], self.acao_dimensoes['estado_4'], self.estados_reforcos['estado_4'], self.estados_finalizado['estado_inicial']
 
 
 if __name__ == '__main__':
