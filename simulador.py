@@ -2,7 +2,7 @@
     \tSeja bem-vindo ao Admirável Mundo Novo!
     \tO objetivo do jogo é dar suporte ao desenvolvimento de Agentes Inteligentes que utilizam Deep Reinforcement Learning
     \tpara tarefas de Processamento de Linguagem Natural em língua portuguesa.
-    \tAutor: Gabriel Pontes (@ograndoptimist)       7
+    \tAutor: Gabriel Pontes (@ograndoptimist)       
 """
 
 from textos import ESTADOS, ACOES, REFORCOS, FINALIZADO, DIMENSOES
@@ -100,7 +100,7 @@ class AdmiravelMundoNovo(object):
         self.reforco += self.reforco_imediato
         self.valor_estado = 2.75
         self.finalizado = self.estados_finalizado['estado_inicial']
-        print("\tReforço: 10")
+        #print("\tReforço: 10")
         self.estado_texto = self.estados_texto['estado_passagem_secreta']
         self.estado_acao = self.acao_textos['estado_passagem_secreta']
         self.espaco_acoes = self.acao_dimensoes['estado_passagem_secreta']
@@ -177,11 +177,7 @@ class AdmiravelMundoNovo(object):
         self.estado_texto = self.estados_texto['estado_4_esquerda']
         self.estado_acao = self.acao_textos['estado_4_esquerda']
         self.espaco_acoes = self.acao_dimensoes['estado_4_esquerda']
-        #print("\tReforço: -10")
-        #print("\tO esquecimento profundo\n\tEste quarto traz o esquecimento temporário a quem nele adentra. Infelizmente, para aqueles que \n\taqui tem acesso acabam sendo teletransportados para o salão principal do primeiro andar.")
-        #print()
-        #self.estado_2()
-        
+             
     def estado_final(self):
         self.reforco_imediato = self.estados_reforcos['estado_final']
         self.reforco += self.reforco_imediato
@@ -204,14 +200,17 @@ class AdmiravelMundoNovo(object):
         else:
             return False
     
-    def read(self):
+    def read_1(self):
         return self.estado_texto, self.estado_acao, self.espaco_acoes, self.reforco_imediato, self.finalizado
+
+    def read(self):
+        return self.estado_texto, self.estado_acao, self.espaco_acoes
 
     def imprimeAcao(self, acoes):
         for cont, acao in enumerate(acoes):
             print("\t[{0}] {1}".format(cont, acao))
 
-    def simulacao(self, acao):
+    def emulador(self, acao):
         if self.valor_estado == 2 and acao == 0:
             return self.estados_texto['estado_2'], self.acao_textos['estado_2'], self.acao_dimensoes['estado_2'], self.estados_reforcos['estado_2'], self.estados_finalizado['estado_inicial']
         elif self.valor_estado == 2 and acao == 1:
@@ -245,10 +244,9 @@ class AdmiravelMundoNovo(object):
         elif self.valor_estado == 5.25 and acao == 0:
             return self.estados_texto['estado_4'], self.acao_textos['estado_4'], self.acao_dimensoes['estado_4'], self.estados_reforcos['estado_4'], self.estados_finalizado['estado_inicial']
 
-
 if __name__ == '__main__':
     AMN = AdmiravelMundoNovo()
-    estado, acao, dimensao_acao, reforco_imediato, finalizado = AMN.read()
+    estado, acao, dimensao_acao, reforco_imediato, finalizado = AMN.read_1()
     print("\tReforço: {0}".format(reforco_imediato))
     print(estado)
     AMN.imprimeAcao(acao)
@@ -262,7 +260,8 @@ if __name__ == '__main__':
                 acao_atual = int(input("\t>>> "))
         print()
         AMN.transicao_estado(acao_atual)
-        estado, acao, dimensao_acao, reforco_imediato, finalizado = AMN.read()
+        estado, acao, dimensao_acao, reforco_imediato, finalizado = AMN.read_1()
         print("\tReforço: {0}".format(reforco_imediato))
         print(estado)
         AMN.imprimeAcao(acao)
+    print("\tReforço acumulado de {0}".format(AMN.reforco))
