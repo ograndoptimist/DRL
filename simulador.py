@@ -233,15 +233,14 @@ class AdmiravelMundoNovo(object):
             return self.estados_texto['estado_3'], self.acao_textos['estado_3'], self.acao_dimensoes['estado_3'], self.estados_reforcos['estado_3'], self.estados_finalizado['estado_inicial']
         elif self.valor_estado == 4 and acao == 2:
             return self.estados_texto['estado_3_direita'], self.acao_textos['estado_3_esquerda_direita'], self.acao_dimensoes['estado_3_esquerda_direita'], self.estados_reforcos['estado_3_esquerda_direita'], self.estados_finalizado['estado_inicial']
-        elif self.valor_estado in [2.75, 4] and acao == 0:
+        elif self.valor_estado in [2.75, 4, 5.25] and acao == 0:
             return self.estados_texto['estado_4'], self.acao_textos['estado_4'], self.acao_dimensoes['estado_4'], self.estados_reforcos['estado_4'], self.estados_finalizado['estado_inicial']
         elif self.valor_estado == 5 and acao == 0:
             return self.estados_texto['estado_4_esquerda'], self.acao_textos['estado_4_esquerda'], self.acao_dimensoes['estado_4_esquerda'], self.estados_reforcos['estado_4_esquerda'], self.estados_finalizado['estado_inicial']
         elif self.valor_estado == 5 and acao == 1:
             return self.estados_texto['estado_final'], self.acao_textos['estado_final'], self.acao_dimensoes['estado_final'], self.estados_reforcos['estado_final'], self.estados_finalizado['estado_final']
-        elif self.valor_estado == 5.25 and acao == 0:
-            return self.estados_texto['estado_4'], self.acao_textos['estado_4'], self.acao_dimensoes['estado_4'], self.estados_reforcos['estado_4'], self.estados_finalizado['estado_inicial']
-
+        
+        
 if __name__ == '__main__':
     AMN = AdmiravelMundoNovo()
     estado, acao, dimensao_acao, reforco_imediato, finalizado = AMN.read_1()
