@@ -196,6 +196,8 @@ class DeepQLearningAgente(object):
             # As sequências precisam ter o mesmo tamanho dentro do mesmo tensor.    
             estado = pad_sequences(estado[:cont + 1])
             acao = pad_sequences(acao[:cont + 1])
+            
+            np.random.seed(0)
 
             # Realiza o passo de gradiente de descida de forma a alcançar o mínimo global da função.
             self.modelo.fit([estado, acao], Q_target[:cont + 1], epochs = 1, verbose = False)
