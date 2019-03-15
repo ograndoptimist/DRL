@@ -60,9 +60,7 @@ class DeepQLearningAgente(object):
         """
             Realiza a conversão dos textos, que descrevem os estados e as ações, em vetor de inteiros para
             de forma a permitir o aprendizado a camada Embedding.
-        """
-
-        
+        """        
         if isinstance(texto, list):
             vetor = []
             for parte in texto:
