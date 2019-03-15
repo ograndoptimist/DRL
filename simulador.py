@@ -50,15 +50,13 @@ class AdmiravelMundoNovo(object):
             self.estado_3()
         elif self.valor_estado == 4 and acao == 2:
             self.estado_3_direita()
-        elif self.valor_estado in [2.75, 4] and acao == 0:
+        elif self.valor_estado in [2.75, 4, 5.25] and acao == 0:
             self.estado_4()
         elif self.valor_estado == 5 and acao == 0:
             self.estado_4_esquerda()
         elif self.valor_estado == 5 and acao == 1:
             self.estado_final()
-        elif self.valor_estado == 5.25 and acao == 0:
-            self.estado_4()
-
+        
     def estado_inicial(self):
         self.reforco_imediato = self.estados_reforcos['estado_inicial']
         self.reforco += self.reforco_imediato
