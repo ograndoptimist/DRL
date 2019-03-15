@@ -4,8 +4,8 @@ def preprocessamento(texto: str):
         ::parametros:
                 texto: uma string que contém todo o texto.
         ::retorno:
-                retorna uma string contendo todas palavras do string original mas sem
-                símbolos especiais e letras maiúsculas.
+                retorna uma string contendo todas palavras da string original sem
+                os símbolos especiais e letras maiúsculas.
         Exemplo:
             >>> preprocessamento("Algum texto aleatorio, aqui.")
             'algum texto aleatorio aqui'
