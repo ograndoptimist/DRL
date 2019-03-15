@@ -30,10 +30,8 @@ ESTADOS = {'estado_inicial':"\tPrimeiro desafio\n\tVocê está na entrada da ilh
             'estado_4':"\tSantuário dos sonhos esquecidos\n\tOs sonhos mais profundos viajam pelos quartos deste andar. Aqui o inconsciente se comunica" + 
                        " com o\n\tconsciente dos seres do Reino. Dizem por aí que sonharam que a chave estaria por aqui, mas\n\tcabe a você verificar" +
                        " quarto por quarto se é uma verdade ou apenas mais um dos sonhos.",
-            'estado_4_esquerda':"\tO esquecimento profundo\n\tEste quarto traz o esquecimento temporário a quem nele adentra. Infelizmente, para aqueles" +
-                                " que \n\taqui tem acesso acabam sendo teletransportados para o salão principal do primeiro andar.",
-            'estado_final':"\tFinal do jogo.\n\tParabéns! Você conseguiu coletar a chave de ouro preciosa! Sendo assim, o jogo está finalizado!"
-           }
+            'estado_4_esquerda':"\tO esquecimento profundo\n\tEste quarto traz o esquecimento temporário a quem nele adentra.",
+            'estado_final':"\tFinal do jogo.\n\tParabéns! Você conseguiu coletar a chave de ouro preciosa! Sendo assim, o jogo está finalizado!"}
 
 
 ACOES = {'estado_inicial':["Atravesse a ponte."],
@@ -46,7 +44,7 @@ ACOES = {'estado_inicial':["Atravesse a ponte."],
          'estado_3':["Suba as escadas.", "Siga à esquerda.", "Siga à direita."],
          'estado_3_esquerda_direita':["Volte ao salão principal."],
          'estado_4':["Siga à esquerda.", "Siga à direita."],
-         'estado_4_esquerda':[],
+         'estado_4_esquerda':["Volte ao Santuário."],
          'estado_final':[]         
         }
 
@@ -83,4 +81,3 @@ DIMENSOES = {'estado_inicial':len(ACOES['estado_inicial']),
              'estado_4_esquerda':len(ACOES['estado_4_esquerda']),
              'estado_final':len(ACOES['estado_final'])             
             }
-
