@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 class DeepQLearningAgente(object):
     """
         Implementação de um Agente Artificial utilizando-se de Deep Reinforcement Learning.
-        É utilizado o algoritmo off-policy Deep Q-Learning para treinar um Agente baseado em Rede Neural Reccorrente(LSTM).
+        É utilizado o algoritmo off-policy Deep Q-Learning para treinar um Agente baseado em Rede Neural Recorrente(LSTM).
     """
     def __init__(self):
         with open('vocabulario.txt', 'r') as arquivo:
@@ -61,6 +61,8 @@ class DeepQLearningAgente(object):
             Realiza a conversão dos textos, que descrevem os estados e as ações, em vetor de inteiros para
             de forma a permitir o aprendizado a camada Embedding.
         """
+
+        
         if isinstance(texto, list):
             vetor = []
             for parte in texto:
@@ -68,7 +70,11 @@ class DeepQLearningAgente(object):
                 tokens = tokenizacao(parte)
                 vetor_aux = vetorizacao(tokens, self.dicionario_de_tokens)
                 vetor.append(vetor_aux)
-            return vetor                
+
+            if len(vetor) == 1:
+                vetor = vetor[0]
+
+            return vetor               
 
         texto = preprocessamento(texto)
         tokens = tokenizacao(texto)
@@ -76,55 +82,32 @@ class DeepQLearningAgente(object):
 
         return vetor
 
-    def q_value(self, estado, acao, epsilon):
+    def q_value(self, estado, acao):
         """
-            Retorna o Q(s, a) da ação fornecida associado ao estado.
+            Retorna o Q(s, a) calculado pela rede neural.
                 ::estado:
                         Um vetor de inteiros.
                 ::acao:
                         Um vetor de inteiros
-                ::retorna:
-                        Um valor numérico racional.
+                ::retorna:                        
         """
-        estado = np.array(estado)
-        acao = np.array(acao)
-        return self.modelo.predict([estado.reshape((1, len(estado))), acao.reshape((1, len(acao)))])[0][0]      
+        return self.modelo.predict([estado.reshape((1, len(estado))), acao.reshape((1, len(acao)))])[0][0]  
 
-    def acao(self, estado, acoes, epsilon, espaco_acoes, mode):
+    def Q(self, estado, acoes):
         """
-            Seletor de ações.
+            Calcula o Q-value para todas ações do estado.
             ::estado:
                     Um vetor de inteiros.
             ::acoes:
-                    Um vetor de inteiros.
-            ::epsilon:
-                    Probabilidade de escolher uma ação aleatória.
-            ::retorna::
-                    Se mode == 0, retorna o índice de uma ação.
-                    Se mode == 1, retorna o Q(s, a).
+                    Um vetor de inteiros.            
+            ::retorna::                    
         """
-        if not mode:
-            if np.random.random() < epsilon:
-                return np.random.randint(0, espaco_acoes)
-
-            estado_acao = np.array(estado)
-            acoes_acao = np.array(acoes)
-
-            q_values = self.q_value(estado, acoes[0], epsilon) if len(acoes) == 1 else [self.q_value(estado, acao, epsilon) for acao in acoes]        
+        if isinstance(acoes[0], int):
+            return [self.q_value(np.array(estado), np.array(acoes))]
         else:
-            if len(acoes) == 0:
-                return 0
-            elif len(acoes) == 1: 
-                q_values =  self.q_value(estado, acoes[0], epsilon)
-            else:
-                q_values = [self.q_value(estado, acao, epsilon) for acao in acoes]
-                    
-        q_values = np.array(q_values)        
+            return [self.q_value(np.array(estado), np.array(acao)) for acao in acoes]              
 
-        return np.argmax(q_values) if mode == 0 else (max(q_values) if isinstance(q_values, np.ndarray) and q_values.ndim != 0 else q_values)       
-
-    def treino(self, episodios = 256, batch_size = 64, epsilon = 1.0, epsilon_decay = 0.99,
-                   gamma = 0.95):
+    def treino(self, episodios = 256, batch_size = 64, epsilon = 1.0, epsilon_decay = 0.99, gamma = 0.95):
         """
             Realiza o treinamento do Agente em batch.
             ::batch_size:
@@ -148,9 +131,8 @@ class DeepQLearningAgente(object):
             acao = [None] * batch_size  
             Q_target = np.zeros((batch_size, 1))            
             reforco_acumulado = 0
-            cont = 0
-            terminado = False
-
+            numero_iteracoes = 0
+            
             # O jogo é inicializado no primeiro estado.
             jogo = AdmiravelMundoNovo()
 
@@ -159,12 +141,15 @@ class DeepQLearningAgente(object):
                 estado_texto, acao_texto, dimensao_acao = jogo.read()
 
                 # Pré-processa os estados e ações, que estão em texto, para vetores de inteiros.
-                estado_ = np.array(self.transforma(estado_texto))
-                acao_ = np.array(self.transforma(acao_texto))
+                estado_ = self.transforma(estado_texto)
+                acoes_ = self.transforma(acao_texto)
 
                 # Seleciona uma ação, escolhida de forma aleatória ou através de max(Q(s, a)).
-                escolha = self.acao(estado_, acao_, eps, dimensao_acao, mode = 0)
-                
+                if np.random.random() < eps:
+                    escolha = np.random.randint(0, dimensao_acao)
+                else:
+                    escolha = np.argmax(self.Q(estado_, acoes_))
+                                            
                 # Executa a ação no emulador e observa o reforço e o próximo estado.
                 proximo_estado_texto, proximas_acoes_texto, prox_dimensao_acao, prox_reforco, terminado = jogo.emulador(escolha)
 
@@ -174,14 +159,14 @@ class DeepQLearningAgente(object):
 
                 if not terminado:
                     # Q(s, a) = r' +  γ  * Q(s', a')
-                    target = prox_reforco + gamma * self.acao(proximo_estado, proximas_acoes, eps, prox_dimensao_acao, mode = 1)
+                    target = prox_reforco + gamma * max(self.Q(proximo_estado, proximas_acoes))
                 else:
                     target = prox_reforco
 
                 # Para o treinamento ser realizado em batch, é necessário que:
-                estado[cont] = estado_
-                acao[cont] = acao_[escolha]
-                Q_target[cont] = target                               
+                estado[numero_iteracoes] = estado_
+                acao[numero_iteracoes] = acoes_ if isinstance(acoes_[0], int) else acoes_[escolha]
+                Q_target[numero_iteracoes] = target                               
                 reforco_acumulado += prox_reforco
 
                 if terminado:
@@ -191,16 +176,16 @@ class DeepQLearningAgente(object):
                 # estado = novo_estado
                 jogo.transicao_estado(escolha)
 
-                cont += 1
+                numero_iteracoes += 1
 
-            # As sequências precisam ter o mesmo tamanho dentro do mesmo tensor.    
-            estado = pad_sequences(estado[:cont + 1])
-            acao = pad_sequences(acao[:cont + 1])
+            # As sequências precisam ter o mesmo tamanho dentro do mesmo tensor que vai alimentar a rede neural.
+            estado = pad_sequences(estado[:numero_iteracoes + 1])
+            acao = pad_sequences(acao[:numero_iteracoes + 1])
             
             np.random.seed(0)
 
             # Realiza o passo de gradiente de descida de forma a alcançar o mínimo global da função.
-            self.modelo.fit([estado, acao], Q_target[:cont + 1], epochs = 1, verbose = False)
+            self.modelo.fit([estado, acao], Q_target[:numero_iteracoes + 1], epochs = 10, verbose = False)
 
             print("Episódio {0}: Reforço acumulado de {1}".format(episodio, reforco_acumulado))
 
@@ -218,7 +203,7 @@ if __name__ == '__main__':
     teste = agente.treino()
 
     plt.plot(teste.keys(), teste.values())
-    plt.title('Agente de Treino: Episodios x Reforços')
-    plt.xlabel('Episodios')
-    plt.ylabel('Reforços Acumulados')
+    plt.title('Agente de Treino: Episodios x Reforço Acumulado')
+    plt.xlabel('Episódios')
+    plt.ylabel('Reforço Acumulado')
     plt.savefig('treino.png')
