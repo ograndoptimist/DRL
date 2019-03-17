@@ -3,7 +3,6 @@ import time
 import random
 from utilidades import preprocessamento
 
-
 class AgenteAleatorio(object):
     def __init__(self):
         self.vocabulario = ""
