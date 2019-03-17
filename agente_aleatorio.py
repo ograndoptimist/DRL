@@ -36,7 +36,6 @@ class AgenteAleatorio(object):
                 self.vocabulario += ' ' + (estado + ' ' + ' '.join(lista_acoes) + " Reforço: %d" %reforco_imediato)
             
             print()
-
         
     def gera_vocabulario(self):
         self.vocabulario = preprocessamento(self.vocabulario)
