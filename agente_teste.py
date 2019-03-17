@@ -16,12 +16,17 @@ class AgenteTeste(DeepQLearningAgente):
 
     def politica(self, estado, acoes):
         estado = np.array(estado)
-        
-        q_values = []
-        for acao in acoes:
-            acao = np.asarray(acao)
-            q_values.append(self.modelo.predict([estado.reshape((1, len(estado))), acao.reshape((1, len(acao)))])[0][0])
-            
+
+        if isinstance(acoes[0], int):
+            acao = np.array(acoes)
+            q_values = self.modelo.predict([estado.reshape((1, len(estado))), acao.reshape((1, len(acao)))])[0][0]
+        else:
+            q_values = []
+            for acao in acoes:
+                acao = np.asarray(acao)
+                q_values.append(self.modelo.predict([estado.reshape((1, len(estado))), acao.reshape((1, len(acao)))])[0][0])
+
+        print("q_values: ", q_values)    
         return np.argmax(q_values)
         
     def joga(self, episodios = 256):
@@ -42,6 +47,8 @@ class AgenteTeste(DeepQLearningAgente):
 
                 estado_ = self.transforma(estado)
                 lista_acoes_ = self.transforma(lista_acoes)
+                print("estado_: ", estado_)
+                print("lista_acoes_: ", lista_acoes_)
                 acao = self.politica(estado_, lista_acoes_)
                 print("estado: ", estado_)
                 print("lista_acoes: ", lista_acoes_)
