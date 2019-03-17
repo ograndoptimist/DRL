@@ -1,3 +1,4 @@
+desça
 reforço
 0
 primeiro
@@ -95,6 +96,7 @@ ajudar
 zelador
 manter
 com
+tomar
 belos
 cortes
 crina
@@ -131,6 +133,7 @@ escolha
 suas
 mãos
 voltar
+volta
 salão
 bem-vindo
 ao
