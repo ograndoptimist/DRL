@@ -14,7 +14,7 @@ class AgenteAleatorio(object):
         for episodio in range(1, episodios + 1):
             jogo = AdmiravelMundoNovo()
 
-            estado, lista_acoes, espaco_acoes, reforco_imediato, terminado = jogo.read()
+            estado, lista_acoes, espaco_acoes, reforco_imediato, terminado = jogo.read_1()
             print("\tReforço: {0}".format(reforco_imediato))
             print(estado)
             jogo.imprimeAcao(lista_acoes)
@@ -28,7 +28,7 @@ class AgenteAleatorio(object):
                 print()
                 
                 jogo.transicao_estado(acao)
-                estado, lista_acoes, espaco_acoes, reforco_imediato, terminado = jogo.read()
+                estado, lista_acoes, espaco_acoes, reforco_imediato, terminado = jogo.read_1()
 
                 print("\tReforço: {0}".format(reforco_imediato))
                 print(estado)
