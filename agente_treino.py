@@ -26,7 +26,7 @@ class DeepQLearningAgente(object):
 
         plot_model(self.modelo, show_shapes = True, to_file = 'modelo.png')
 
-    def cria_modelo(self, dimensoes_embedding = 32, dimensoes_lstm = 32, dropout_rate = 0.5, numero_maximo_palavras = 269):
+    def cria_modelo(self, dimensoes_embedding = 32, dimensoes_lstm = 32, dropout_rate = 0.5, numero_maximo_palavras = 272):
         """
             Implementa a Rede Neural que dá o Q(s,a) para todas possíveis ações no estado considerado.
         """
