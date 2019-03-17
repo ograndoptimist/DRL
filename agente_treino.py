@@ -125,22 +125,22 @@ class DeepQLearningAgente(object):
         # Dicionário que armazena {episódio:reforco_acumulado}
         estat_reforcos = dict()
 
-        # Implementa o replay de memória
-        replay_estado = [None] * 50000
-        replay_acao = [None] * 50000
-        replay_Q = [None] * 50000
+        # Tentativa de implementação do replay de experiência.
+        memoria_replay = dict()
+        vet_estado_acao_target = [[None], [None], [None]]        
+
+        numero_iteracoes = 0
 
         for episodio in range(1, episodios + 1):
             reforco_acumulado = 0
-            numero_iteracoes = 0
-            
+                        
             # O jogo é inicializado no primeiro estado.
             jogo = AdmiravelMundoNovo()
 
             for passo in range(batch_size):
                 # Obtém as descrições de estado e ação do jogo.
                 estado_texto, acao_texto, dimensao_acao = jogo.read()
-
+                
                 # Pré-processa os estados e ações, que estão em texto, para vetores de inteiros.
                 estado_ = self.transforma(estado_texto)
                 acoes_ = self.transforma(acao_texto)
@@ -153,7 +153,7 @@ class DeepQLearningAgente(object):
                                                                 
                 # Executa a ação no emulador e observa o reforço e o próximo estado.
                 proximo_estado_texto, proximas_acoes_texto, prox_dimensao_acao, prox_reforco, terminado = jogo.emulador(escolha)
-
+                
                 # Pré-processa os próximos estados e ações, que estão em texto, para vetores de inteiros.
                 proximo_estado = self.transforma(proximo_estado_texto)
                 proximas_acoes = self.transforma(proximas_acoes_texto)
@@ -164,47 +164,58 @@ class DeepQLearningAgente(object):
                 else:
                     target = prox_reforco
 
-                # Para o treinamento ser realizado em batch, é necessário que:                
-                replay_estado[numero_iteracoes] = estado_
-                replay_acao[numero_iteracoes] = acoes_ if isinstance(acoes_[0], int) else acoes_[escolha]
-                replay_Q[numero_iteracoes] = target
-
+                # Para o treinamento ser realizado em batch, é necessário que:
+                vet_estado_acao_target[0] = estado_
+                vet_estado_acao_target[1] = acoes_ if isinstance(acoes_[0], int) else acoes_[escolha]
+                vet_estado_acao_target[2] = [target]
+                                
+                memoria_replay[numero_iteracoes] = vet_estado_acao_target.copy()               
+                
                 reforco_acumulado += prox_reforco
 
                 if terminado:
                     break
 
                 # Dessa vez, a transição de estado é realizada:
-                # estado = novo_estado.
+                # estado = novo_estado
                 jogo.transicao_estado(escolha)
 
                 numero_iteracoes += 1
-
+            
             # Torna os dados estatisticamente independentes, já que os dados num problema de RL
             # são fortemente dependentes e não-uniformemente distribuídos.
-            if episodio == 1:
-                estado = replay_estado[:numero_iteracoes + 1]
-                acao = replay_acao[:numero_iteracoes + 1]
-                Q_target = replay_Q[:numero_iteracoes + 1]                              
+            amostra = list(memoria_replay.values())
+            if episodio in [1, 2, 3, 4, 5, 6]:
+                random.shuffle(amostra)
+            elif episodio < 50:
+                 amostra = random.sample(amostra, 16)                
             else:
-                estado = random.sample(replay_estado[:numero_iteracoes], numero_iteracoes)
-                acao = random.sample(replay_acao[:numero_iteracoes], numero_iteracoes)
-                Q_target = random.sample(replay_Q[:numero_iteracoes], numero_iteracoes)
+                main = random.sample(amostra, 32)                
 
+            estado = []
+            acao = []
+            Q_target = []
+            for i in range(len(amostra)):
+                estado.append(amostra[i][0])
+                acao.append(amostra[i][1])
+                Q_target.append(amostra[i][2])
+            
             # As sequências precisam ter o mesmo tamanho dentro do mesmo tensor que vai alimentar a rede neural.
             estado = pad_sequences(estado)
             acao = pad_sequences(acao)
 
-            np.random.seed(0)
-            random.seed(0)
-            
+            Q_target = np.array(Q_target)
+                        
             # Realiza o passo de gradiente de descida de forma a alcançar o mínimo global da função.
-            self.modelo.fit([estado, acao], Q_target, epochs = 5, verbose = False)
+            self.modelo.fit([estado, acao], Q_target, epochs = 10, verbose = False)
 
             print("Episódio {0}: Reforço acumulado de {1}".format(episodio, reforco_acumulado))
-                        
+            print()
+            
             estat_reforcos.update({episodio: reforco_acumulado})
             eps *= epsilon_decay
+
+        print("ultimo eps: ", eps)
 
         # Salva o modelo da rede neural utilizada.
         self.modelo.save('modelo_lstm')
