@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 from keras.models import load_model
 import numpy as np
 
-
 class AgenteTeste(DeepQLearningAgente):
     def __init__(self):
         super().__init__()
