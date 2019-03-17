@@ -188,9 +188,9 @@ class DeepQLearningAgente(object):
             if episodio in [1, 2, 3, 4, 5, 6]:
                 random.shuffle(amostra)
             elif episodio < 50:
-                 amostra = random.sample(amostra, 16)                
+                 amostra = random.sample(amostra, batch_size // 8)                
             else:
-                main = random.sample(amostra, 32)                
+                main = random.sample(amostra, batch_size // 4)                
 
             estado = []
             acao = []
@@ -207,7 +207,7 @@ class DeepQLearningAgente(object):
             Q_target = np.array(Q_target)
                         
             # Realiza o passo de gradiente de descida de forma a alcançar o mínimo global da função.
-            self.modelo.fit([estado, acao], Q_target, epochs = 10, verbose = False)
+            self.modelo.fit([estado, acao], Q_target, epochs = 5, verbose = False)
 
             print("Episódio {0}: Reforço acumulado de {1}".format(episodio, reforco_acumulado))
             print()
