@@ -14,7 +14,7 @@ o
 objetivo
 do
 jogo
-é
+e
 coletar
 a
 chave
@@ -37,7 +37,6 @@ uma
 ponte
 que
 acesso
-a
 [0]
 atravesse
 1
@@ -90,7 +89,6 @@ bravos
 cavalos
 aproveitar
 chegou
-e
 ajudar
 zelador
 manter
@@ -107,7 +105,7 @@ toma
 nenhum
 coice
 ja
-também
+tambem
 se
 encontram
 selvagens
