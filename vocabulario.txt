@@ -1,6 +1,5 @@
 desça
 reforço
-0
 primeiro
 desafio
 voce
@@ -37,13 +36,10 @@ uma
 ponte
 que
 acesso
-[0]
 atravesse
-1
 agora
 porta
 possui
-3
 pode
 explorar
 através
@@ -56,10 +52,8 @@ tres
 tesouro
 procuras
 abra
-[1]
 va
 leste
-[2]
 oeste
 jardim
 no
