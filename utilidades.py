@@ -1,11 +1,11 @@
-def preprocessamento(texto: str):
+def preprocessamento(texto):
     """
         Elimina pontuação e símbolos especiais do texto.
         ::parametros:
                 texto: uma string que contém todo o texto.
         ::retorno:
-                retorna uma string contendo todas palavras da string original sem
-                os símbolos especiais e letras maiúsculas.
+                retorna uma string contendo todas palavras do string original mas sem
+                símbolos especiais e letras maiúsculas.
         Exemplo:
             >>> preprocessamento("Algum texto aleatorio, aqui.")
             'algum texto aleatorio aqui'
@@ -20,6 +20,16 @@ def preprocessamento(texto: str):
         for caracter in palavra:
             if caracter in {".", ",", "'", "’", '"', ":", "!"}:
                 pass
+            elif caracter in ['á', 'â', 'ã']:
+                nova_palavra += 'a'
+            elif caracter in ['é', 'ê']:
+                nova_palavra += 'e'
+            elif caracter in ['ó', 'ô', 'õ']:
+                nova_palavra += 'o'
+            elif caracter == 'í':
+                nova_palavra += 'i'
+            elif caracter == 'ú':
+                nova_palavra += 'u'
             else:
                 nova_palavra += caracter
         texto_preprocessado +=  ' ' + nova_palavra
@@ -28,7 +38,7 @@ def preprocessamento(texto: str):
 
     return texto_preprocessado.lower()
 
-def tokenizacao(texto_preprocessado: str):
+def tokenizacao(texto_preprocessado):
     """
         Constrói a tokenização.
         ::parametros:
@@ -50,7 +60,7 @@ def tokenizacao(texto_preprocessado: str):
 
     return token
 
-def palavraParaIndice(tokens: list):
+def palavraParaIndice(tokens):
     """
         Cria um dicionário associando um índice inteiro a cada palavra no vetor tokens.
         ::parametros:
@@ -70,7 +80,7 @@ def palavraParaIndice(tokens: list):
 
     return dicionario_de_palavras
 
-def vetorizacao(lista_de_palavras: list, dicionario_de_palavras: dict):
+def vetorizacao(lista_de_palavras, dicionario_de_palavras):
     """
         Vetorização dos tokens.
         ::parametros:
