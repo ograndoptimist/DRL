@@ -20,7 +20,7 @@ def preprocessamento(texto):
         for caracter in palavra:
             if caracter in {".", ",", "'", "’", '"', ":", "!"}:
                 pass
-            elif caracter in ['á', 'â', 'ã']:
+            elif caracter in ['á', 'â', 'ã', 'à']:
                 nova_palavra += 'a'
             elif caracter in ['é', 'ê']:
                 nova_palavra += 'e'
