@@ -3,9 +3,10 @@ Desenvolvimento de um Agente Artificial treinado com o algoritmo Deep Q-Learning
 (duas entradas: uma entrada para o texto do estado e outro para as possíveis ações a serem tomadas neste estado corrente).
 
 O Projeto foi realizado levando em conta os seguintes resultados publicados:
-* Using Reinforcement Learning to learn how to play text-based games (Mikuláš Zelinka, 2018)
+* Using Reinforcement Learning to learn how to play text-based games (Mikuláš Zelinka, 2018).
 * Language Understanding for Text-based Games using DeepReinforcement Learning (Karthik Narasimhan, Tejas Kulkarni, Regina    Barzilay, 
   2017).
+* Playing Atari with Deep Reinforcement Learning (Volodymyr Mnih, Koray Kavukcuoglu, David Silver, Alex Graves, Ioannis Antonoglou Daan Wierstra, Martin Riedmiller, 2013).
   
 O Emulador do jogo foi totalmente desenvolvido por mim. No momento é composto apenas por 14 estados e de transições de estado
 determinísticas. 
