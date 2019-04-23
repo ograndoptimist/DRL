@@ -1,4 +1,4 @@
-# DRL
+# Deep Reinforcement Learning
 Desenvolvimento de um Agente Artificial treinado com o algoritmo Deep Q-Learning com auxílio de uma Rede Neural Recorrente Siamesa
 (duas entradas: uma entrada para o texto do estado e outro para as possíveis ações a serem tomadas neste estado corrente).
 
