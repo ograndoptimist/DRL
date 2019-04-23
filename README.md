@@ -18,6 +18,12 @@ Melhorias a serem implementadas:
 * Implementação do algoritmo Double Deep Q-Learning, de forma a tornar o treinamento mais estável.
 * Replay de memória de experiência de forma eficiente. Numa próxima implementação, usar Listas de Prioridades, onde a chave de
   prioridade é o TD Error.
+  
+  
+ 
+ Integrantes do Projeto:
+ * Gabriel de Miranda, UERJ, gabrieliprj@gmail.com 
+ * Karla Tereza Figueiredo, PUC-RJ/UERJ, karla.figueiredo@gmail.com.
 
 
 
