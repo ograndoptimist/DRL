@@ -7,9 +7,9 @@ O Projeto foi realizado levando em conta os seguintes resultados publicados:
 * Language Understanding for Text-based Games using DeepReinforcement Learning (Karthik Narasimhan, Tejas Kulkarni, Regina    Barzilay, 
   2017).
   
-  O Emulador do jogo foi totalmente desenvolvido por mim. No momento é composto apenas por 14 estados e de transições de estado
-  determinísticas. 
-  A escolha de fase de inicialização do jogo já é feita de forma estocástica.
+O Emulador do jogo foi totalmente desenvolvido por mim. No momento é composto apenas por 14 estados e de transições de estado
+determinísticas. 
+A escolha de fase de inicialização do jogo já é feita de forma estocástica.
 
 
 
